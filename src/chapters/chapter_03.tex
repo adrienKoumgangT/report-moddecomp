@@ -1,0 +1,153 @@
+%! Author = adrien koumgang tegantchouang
+%! Date = 09/07/24
+
+\chapter{The Algorithm by Ehrenfeucht}\label{ch:the-algorithm-by-ehrenfeucht}
+
+Modular decomposition is a powerful technique used to simplify and analyze the structure of graphs by breaking them down into modules.
+One of the notable algorithms for achieving this is the algorithm developed by Ehrenfeucht et al.
+This section delves into the details of the algorithm, its steps, and its application in graph theory.
+
+\section{Algorithm Steps}\label{sec:algorithm-steps}
+
+
+Ehrenfeucht, Gabow, McConnell, and Sullivan introduced an efficient algorithm for the modular decomposition of graphs and 2-structures~\cite{PTDMD}.
+Their algorithm operates in $O(n^2)$ time complexity, making it suitable for large graphs.
+The algorithm is based on a divide-and-conquer approach, which recursively partitions the graph into modules and constructs the modular decomposition tree.
+
+\begin{mydef}
+    Let $v$ be a node of $dom(g)$; $G(g, v)$ denotes a graph whose nodes are given by $dom(g) - \{v\}$.
+    There is an edge in $G(g, v)$ from node $x$ to node $y$ if x distinguishes $y$ and $v$ in $g$.
+    $M(g, v)$ denotes the family of maximal clans of $g$ that do not contain $v$.
+    That is, $X \in M(g, v)$ iif $X$ is a clan, and for every clan $Y$ such that $X \subset Y$, $Y$ contains $v$.
+\end{mydef}
+
+$G(g, v)$ is trivially computed in $O(n^2)$ time.
+$M(g, v)$ is a partition of $dom(g) - \{v\}$, and it may be computed with Algorithm 3.1, variants of which have appeared repeatedly in related contexts.
+The prime tree family of an arbitrary two-structure is then computed with Algorithm 3.2.
+
+\begin{algorithm}
+    \begin{algorithmic}
+        \Function{M}{$g$, $v$}
+            \State Maintain a family $L$ of partition classes, and for each partition class, $S$, maintain a set $Z(S)$ of ``unprocessed outsiders''.
+            Initially, there is one partition class $S = dom(g) - \{v\}$ in $L$, with $Z(S) = \{v\}$
+            \While{$L$ contains a class $S$ such that $Z(S)$ is nonempty}
+                \State Remove $S$ from $L$
+                \State Let $w$ be an arbitrary member of $Z(S)$
+                \State Partition $S$ into the maximal subsets that are not distinguished by $w$
+                \For{each resulting subset $W$}
+                    \State Make $W$ a member of $L$
+                    \State Let $Z(W) = (S - W) \cup Z(S) - \{w\}$
+                \EndFor
+            \EndWhile
+        \EndFunction
+    \end{algorithmic}\label{alg:compute-m}
+\end{algorithm}
+
+\begin{algorithm}
+    \begin{algorithmic}
+        \Function{ptf}{$g$}
+            \State Select a node $v$ of $g$ and compute $M(g, v)$
+            \State Let $g' = g / (M(g, v) \cup \{\{v\}\})$
+            \State Let $\{v'\}$ be the image of $\{v\}$ in $g'$
+            \State $G' = G(g', v')$
+            \State $G''$ be the component graph of $G'$
+            \State Create a tree node $t$
+            \State $u \coloneqq t$
+            \While{$G''$ is not empty}
+                \State Create a tree node $w$ and make it a child of $u$
+                \State Remove a sink from $G''$; Let $F$ be the corresponding members of $M(g, v)$
+                \If{$|F|$ > 1}
+                    \State $u$ is primitive
+                \Else
+                    \State u is complete
+                \EndIf
+                \For{each member $X$ of $F$}
+                    \State compute \CALL{prime-tree-family}{$g|X$} recursively
+                    \If{u and the root of $ptf(g|X)$ are both complete and the same color}
+                        \State make the children of $ptf(g|X)$ be children of $u$;
+                    \ELSE
+                        \State make $ptf(g|X)$ be a child of u
+                    \EndIf
+                \EndFor
+                \State $u \coloneqq w$
+            \EndWhile
+            \Return $t$
+        \EndFunction
+    \end{algorithmic}\label{alg:prime-tree-family}
+\end{algorithm}
+
+The Ehrenfeucht et al. algorithm for modular decomposition can be summarized in the following steps:
+
+\begin{enumerate}
+    \item \textbf{Initialization:}
+    \begin{itemize}
+        \item Start with the input graph $G = (V, E)$, where $V$ is the set of vertices and $E$ is the set of edges.
+    \end{itemize}
+    \item \textbf{Selection of a Pivot Vertex:}
+    \begin{itemize}
+        \item Choose a pivot vertex $v \in V$.
+        This vertex will be used to partition the graph into modules.
+    \end{itemize}
+    \item \textbf{Partitioning the Graph:}
+    \begin{itemize}
+        \item Partition the vertex set $V \setminus \{v\}$ into modules based on their adjacency to the pivot vertex $v$.
+        \item Two vertices $u$ and $w$ are in the same module if they have the same adjacency relationship with $v$.
+    \end{itemize}
+    \item \textbf{Recursive Decomposition:}
+    \begin{itemize}
+        \item Recursively apply the modular decomposition algorithm to each module obtained in the previous step.
+        \item Construct the quotient graph, where each module is treated as a single vertex, and edges between modules represent the connectivity between them.
+    \end{itemize}
+    \item \textbf{Construction of the Modular Decomposition Tree:}
+    \begin{itemize}
+        \item Combine the results of the recursive decomposition to form the modular decomposition tree.
+        \item The root of the tree represents the entire graph, and the leaves represent the individual vertices.
+    \end{itemize}
+\end{enumerate}
+
+
+\section{Example}\label{sec:example}
+
+Consider a simple graph $G$ with vertices $V = \{a, b, c, d, e\}$ and edges $E = \{(a, b), (a, c), (b, c), (d, e)\}$.
+The modular decomposition using Ehrenfeucht's algorithm can be illustrated as follows:
+
+\begin{enumerate}
+    \item \textbf{Choose Pivot Vertex:}
+    \begin{itemize}
+        \item Select vertex $a$ as the pivot.
+    \end{itemize}
+    \item \textbf{Partition the Graph:}
+    \begin{itemize}
+        \item Partition $\{b, c, d, e\}$ based on their adjacency to $a$:
+        \begin{itemize}
+            \item $b$ and $c$ are adjacent to $a$.
+            \item $d$ and $e$ are not adjacent to $a$.
+        \end{itemize}
+        \item Resulting modules: $\{b, c\}$ and $\{d, e\}$.
+    \end{itemize}
+    \item \textbf{Recursive Decomposition:}
+    \begin{itemize}
+        \item Apply the algorithm to the subgraphs induced by $\{b, c\}$ and $\{d, e\}$:
+        \begin{itemize}
+            \item Subgraph $\{b, c\}$ is already fully connected (a prime module).
+            \item Subgraph $\{d, e\}$ is also fully connected (a prime module).
+        \end{itemize}
+    \end{itemize}
+    \item \textbf{Construct Modular Decomposition Tree:}
+    \begin{itemize}
+        \item Combine the results to form the modular decomposition tree:
+    \end{itemize}
+\end{enumerate}
+
+\section{Advantages of Ehrenfeucht's Algorithm}\label{sec:advantages-of-ehrenfeucht's-algorithm}
+
+\begin{itemize}
+    \item \textbf{Efficiency:} The algorithm operates in $O(n^2)$ time, making it feasible for large graphs.
+    \item \textbf{Simplicity:} The divide-and-conquer approach simplifies the process of identifying modules and constructing the decomposition tree.
+    \item \textbf{Practicality:} The algorithm is applicable to both undirected graphs and 2-structures.
+\end{itemize}
+
+
+\hspace{4cm}
+
+The next chapter will discuss an implementation of the algorithm in Python made by another Sorbonne University student and its performance compared with another implementation made in SageMath.

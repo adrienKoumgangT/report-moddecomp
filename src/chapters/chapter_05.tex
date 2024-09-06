@@ -1,0 +1,846 @@
+%! Author = adrien koumgang tegantchouang
+%! Date = 09/07/24
+
+
+\chapter{Implementation in Rust and C++}\label{ch:implementation-in-rust-and-cpp}
+
+The implementation of the modular decomposition algorithm in Rust was motivated by the need to overcome performance limitations observed in previous implementation in Python.
+The primary motivation for implementing the modular decomposition algorithm in Rust was to achieve better performance and scalability for large and complex graphs.
+As described on the official Rust website, we have that Rust is blazingly fast and memory-efficient: with no runtime or garbage collector, it can power performance-critical services, run on embedded devices, and easily integrate with other languages.
+Rust's rich type system and ownership model guarantee memory-safety and thread-safety -- enabling you to eliminate many classes of buges at compile-time.
+In brief, Rust is a programming language that adopts a very specific programming philosophy, mainly thanks to its ownership principle, which ensures memory safety without needing a garbage collector.
+Ownership governs how memory is managed and how different parts of a program can access and modify data.
+
+the key principles of ownership in Rust are~\cite{rust}:
+\begin{itemize}
+    \item \textbf{Ownership Rules}
+    \begin{itemize}
+        \item Each value in Rust has a variable that's called its owner.
+        \item There can only be one owner at a time.
+        \item When the owner goes out of scope, the value will be dropped (freed).
+    \end{itemize}
+    \item \textbf{Borrowing and References}
+    \begin{itemize}
+        \item He can borrow a value by creating a reference to it using `\&'.
+        \item Borrowing can be either immutable (`\&T') or mutable (`\&mut T').
+        \item Multiple immutable references are allowed, but only one mutable reference is allowed at a time.
+    \end{itemize}
+    \item \textbf{Move Semantics}
+    \begin{itemize}
+        \item When a value is assigned to another variable or passed to a function, the ownership of the value moves to the new variable or function parameter.
+        \item After the move, the original variable is no longer accessible.
+    \end{itemize}
+    \item \textbf{Copy Trait}
+    \begin{itemize}
+        \item For types that implement the `Copy' trait (like integers and other simple types), a copy of the value is made rather than moving ownership.
+    \end{itemize}
+    \item \textbf{Lifetimes}
+    \begin{itemize}
+        \item Lifetimes are a way to ensure that references are valid as long as they are needed.
+        \item They help the compiler reason about how long references should be valid and prevent dangling references.
+    \end{itemize}
+\end{itemize}
+
+Coming as I do from programming languages such as C and Java, where you could have several pointers to a memory space in modification mode, where you could pass a pointer to a variable while still retaining control over it in write mode, Rust came to me as a real challenge.
+The level of challenge was even greater because the code to be translated into Rust is written in Python~\cite{pythoncode}, which has the merit of being very flexible in terms of typing, variable access and memory areas~\cite{python}.
+Many of the functions to be translated, especially the main one, were recursive, and some of them contained cycles that defined variables with a fairly complex life cycle.
+As a result, I quickly ran into difficulties writing the code in Rust.
+To overcome this, I turned to a programming language that has strongly influenced Rust: C++~\cite{cpp}.
+
+This chapter provides an in-depth discussion of the methodologies, challenges and results associated with the implementation in Rust and the reasons why I decided to implement also in C++.
+
+
+\section{Implementation in Rust: Graph Representation, Algorithm Design and Optimization Techniques}\label{sec:implementation-in-rust:-graph-representation-algorithm-design-and-optimization-techniques}
+
+This section delves into the detailed aspects of implementing the algorithm in Rust, covering the graph representation, algorithm design, and optimization techniques.
+
+\subsection{Graph Representation}\label{subsec:graph-representation}
+
+For the representation of the various graphs used during the execution of the modular decomposition algorithm, such as the 2-structures, I followed the implementation made by Eleni Pistiloglou in her second implementation in Python, which uses mainly sets instead of lists to optimise access to both nodes and arcs.
+
+\subsubsection{2-structure}
+
+we therefore have the following definition for the representation of a 2-structure:
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the 2-structure with Rust}, label={lst:rust-define-twostructure}, firstnumber=1]
+    #[derive(Debug)]
+    #[derive(Clone)]
+    pub struct TwoStructure {
+        /// the graph of a two structure
+        pub nodes: HashSet<u64>,
+        /// list of sets, colors[i] contains the set of edges of color i
+        pub colors: Vec<HashSet<(u64, u64)>>,
+        /// only for quotient graph, contains the nodes of the graph if they are modules
+        pub modules: Vec<HashSet<u64>>,
+    }
+\end{lstlisting}
+where we have:
+\begin{itemize}
+    \item \textbf{nodes}: the graph of a two structure
+    \item \textbf{colors}: list of sets, colors[i] contains the set of edges of color i
+    \item \textbf{modules}: only for quotient graph, contains the nodes of the graph if they are modules
+\end{itemize}
+
+\subsubsection{SCC}
+
+SCC, for Strongly Connected Components, is a structure that takes a graph as input and determines the `strongly connected components' of this graph using its two visit and compute functions.
+For doing this, we use `Tarjan's strongly connected components algorithm'~\cite{sccalgowikipedia}.
+Tarjan's strongly connected components algorithm is an algorithm in graph theory for finding the strongly connected components (SCCs) of a directed graph.
+It runs in linear time, matching the time bound for alternative methods including Kosaraju's algorithm and the path-based strong component algorithm.
+The algorithm is named for its inventor, Robert Tarjan.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCC with Rust}, label={lst:rust-define-scc}, firstnumber=1]
+    pub struct SCC<'a> {
+        pub graph: Box<dyn GraphTrait + 'a>,
+        pub index: u64,
+        pub components: Vec<HashSet<u64>>,
+        pub comp_index: u64,
+        pub dfs_stk: Vec<SCCNode>,
+        pub visited: HashMap<u64, SCCNode>,
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{graph}: This attribute holds the graph on which Tarjan's algorithm will be executed.
+    It provides the vertices and the adjacency list needed to traverse the graph.
+    \item \textbf{index}: This attribute is used to assign a unique discovery index to each vertex when it is first visited during the depth-first search (`DFS').
+    It is incremented with each new vertex visit.
+    \item \textbf{components}: This attribute stores the strongly connected components (`SCCs') identified in the graph.
+    Each SCC is represented as a set of vertices, and all such sets are collected in this list.
+    \item \textbf{comp\_index}:
+    \item \textbf{dfs\_stk}: This attribute acts as a stack to manage the depth-first search traversal.
+    It helps in tracking the current path and managing backtracking, which is essential for updating the `lowlink' values and identifying SCCs.
+    \item \textbf{visited}: This attribute keeps track of all the vertices that have been visited and their associated SCCNode instances.
+    It helps in quickly checking whether a vertex has already been visited and accessing its SCCNode information.
+\end{itemize}
+
+where GraphTrait is:
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining GraphTrait}, label={lst:rust-define-graphtrait}, firstnumber=1]
+    pub trait GraphTrait {
+        fn vertices(&self) -> HashSet<u64>;
+        fn successors(&mut self, v: u64) -> &HashSet<u64>;
+    }
+\end{lstlisting}
+
+\subsubsection{SCCNode}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCCNode with Rust}, label={lst:rust-define-sccnode}, firstnumber=1]
+    #[derive(Clone, Copy)]
+    pub struct SCCNode {
+        // original vertex ... must be hashable and unique (among vertices)
+        pub vertex: u64,
+        pub index: u64,
+        pub lowlink: u64,
+        pub on_stack: bool,
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{vertex}: This attribute holds the original vertex value from the graph.
+    It uniquely identifies the vertex this `SCCNode' instance represents.
+    \item \textbf{index}: This attribute holds the discovery index of the vertex.
+    When a vertex is first visited, it is assigned a unique index, which essentially records the order of the vertex's discovery during the depth-first search (DFS).
+    \item \textbf{lowlink}: This attribute is crucial for Tarjan's algorithm.
+    The `lowlink' value of a vertex is the smallest index of any vertex that is reachable from the vertex, including the vertex itself.
+    It helps in identifying the root of a strongly connected component.
+    \item \textbf{on\_stack}: This attribute indicates whether the vertex is currently on the stack (`dfs\_stk') used by the algorithm.
+    It is used to manage the backtracking process and to ensure that we only consider vertices that are part of the current path in the DFS\@.
+\end{itemize}
+
+
+\subsubsection{MiniGraph}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Minigraph with Rust}, label={lst:rust-define-minigraph}, firstnumber=1]
+    #[derive(Debug)]
+    pub struct MiniGraph {
+        dico: HashMap<u64, HashSet<u64>>,
+    }
+\end{lstlisting}
+
+\subsubsection{DGraph}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the DGraph with Rust}, label={lst:rust-define-dgraph}, firstnumber=1]
+    #[derive(Debug)]
+    pub(crate) struct DGraph {
+        nodes: HashSet<usize>,
+        edges: Vec<HashSet<usize>>,
+        modules: Vec<HashSet<usize>>,
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{nodes}: A set of nodes in the graph.
+    \item \textbf{edges}: A vector where each element is a set of nodes representing edges for each node.
+    \item \textbf{modules}: A vector of sets, where each set contains nodes representing a module within the graph.
+\end{itemize}
+
+\subsubsection{ComponentGraph}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Component Graph with Rust}, label={lst:rust-define-component-graph}, firstnumber=1]
+    #[derive(Debug)]
+    struct ComponentGraph {
+        graph: DGraph,
+        components: Vec<HashSet<usize>>,
+        modules: Vec<HashSet<usize>>,
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{graph}: The underlying directed graph.
+    \item \textbf{components}: A vector of sets, where each set contains nodes representing a strongly connected component.
+    \item \textbf{modules}: A vector of sets, where each set contains nodes representing a module within the graph.
+\end{itemize}
+
+\subsubsection{TreeNode}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the TreeNode with Rust}, label={lst:rust-define-treenode}, firstnumber=1]
+    #[derive(Debug)]
+    struct TreeNode {
+        node_type: String,
+        node_colors: Vec<usize>,
+        children: Vec<TreeNode>,
+        node_id: Option<usize>,
+        prime_graph: Option<TwoStructure>,
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{node\_type}: A string indicating the type of the node.
+    \item \textbf{node\_colors}: A vector of colors associated with the node.
+    \item \textbf{children}: A vector of `TreeNode` instances representing the children of this node.
+    \item \textbf{node\_id}: An optional node identifier.
+    \item \textbf{prime\_graph}: An optional `TwoStructure` representing a prime graph associated with this node.
+\end{itemize}
+
+\subsection{Algorithms, Methods and functions}\label{subsec:algoithms-methods-and-functions}
+
+Each of these data structures defined above implements functionality.
+Here, we'll look at the ones that are most important during the modular decomposition.
+
+\subsubsection{Maximal modules}
+
+The `maximal\_modules' function aims to find all maximal modules (subsets of nodes) in a graph that include a specific node `v'.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the maximal modules with Rust}, label={lst:rust-define-maximal-modules}, firstnumber=1]
+    /// constructs M(g, v) according to the algorithm 3.1 of the article [1]
+    ///
+    /// # Arguments
+    ///
+    /// * 'g' - a two-structure
+    /// * 'v' - a node of g
+    ///
+    /// # Returns
+    ///
+    /// a list of sets of nodes (modules)
+    pub fn maximal_modules(g: &mut TwoStructure, v: u64) -> Vec<HashSet<u64>> {
+        let mut init_module = g.nodes.clone();
+        init_module.remove(&v);
+        let mut partition = Vec::new();
+        partition.push(init_module);
+        let mut outsiders = Vec::new();
+        let mut outsiders_h = HashSet::new();
+        outsiders_h.insert(v);
+        outsiders.push(outsiders_h);
+        loop {
+            if partition.is_empty() {
+                panic!("Empty partition (please report)")
+            }
+            let mut module = HashSet::new();
+            let mut index = 0;
+            for i in 0..partition.len() {
+                if outsiders.get(i).unwrap().len() as u64 > 0 {
+                    // pick a module with outsiders
+                    module = partition.get(i).unwrap().clone();
+                    index = i;
+                    break;
+                }
+            }
+            if module.is_empty() {
+                // if there is no module left having outsiders
+                return partition;
+            }
+
+            // partition.remove(module)
+            for i in 0..partition.len() {
+                if *partition.get(i).unwrap() == module {
+                    partition.remove(i);
+                    break;
+                }
+            }
+
+            let outsiders_i = outsiders.remove(index);
+            // outsiders.remove(outsiders_i)
+
+
+            // pick an arbitrary element
+            let w = pickup(outsiders_i.clone());
+
+            // list of sets of nodes
+            let mut graph_alter = g.clone();
+            let module_partition = module.clone();
+            let r_modules = partition_module(&mut graph_alter, w, module_partition);
+            for r_module in r_modules {
+                let r_module_diff = r_module.clone();
+                partition.push(r_module);
+                // a = module - r_module
+                let ha_alter = module.clone();
+                let ha = ha_alter
+                    .difference(&r_module_diff)
+                    .collect::<HashSet<_>>();
+                let mut a = HashSet::new();
+                for &eha in ha {
+                    a.insert(eha);
+                }
+                let mut b: HashSet<u64> = HashSet::new();
+                if !outsiders_i.is_empty() {
+                    for el in outsiders_i.iter() {
+                        b.insert(*el);
+                    }
+                }
+                b.remove(&w);
+                outsiders.push(b);
+            }
+        }
+
+        // this never happens
+        // partition
+    }
+\end{lstlisting}
+
+In arguments, we have:
+\begin{itemize}
+    \item `g': A reference to a `TwoStructure' representing the graph.
+    \item `v': A node in the graph used as a reference for finding maximal modules.
+\end{itemize}
+
+and return a `Vec\textless HashSet\textless usize\textgreater\textgreater' where each `HashSet\textless usize\textgreater' represents a maximal module containing the node `v'.
+
+\subsubsection{Partition module}
+
+The `partition\_module' function aims to divide a given module (subset of nodes) into smaller submodules based on certain criteria related to the relationships between nodes in a graph.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the partition module with Rust}, label={lst:rust-define-partition module}, firstnumber=1]
+    /// Partitions module in strong maximal modules
+    ///
+    /// # Arguments
+    ///
+    /// * 'g' - a two-structure
+    /// * 'w' - the first node used for partitioning module
+    /// * 'module' - a set of nodes of g to partition
+    ///
+    /// # Returns
+    ///
+    /// a list of sets of nodes
+    pub fn partition_module(g: &mut TwoStructure, w: u64, module: HashSet<u64>) -> Vec<HashSet<u64>> {
+        let colors_len = g.colors.len();
+
+        // modules = [ [set() for c in g.colors] for c_ in g.colors ]
+        let mut modules: Vec<Vec<HashSet<u64>>> = Vec::new();
+
+        // is_empty = [ [True for c in g.colors] for c_ in g.colors ]
+        let mut is_empty: Vec<Vec<bool>> = Vec::new();
+        for _ in 0..colors_len {
+            let mut vec_intern_modules_aux: Vec<HashSet<u64>> = Vec::new();
+            let mut vec_intern_is_empty_aux: Vec<bool> = Vec::new();
+            for _ in 0..colors_len {
+                let set_inter_modules_aux: HashSet<u64> = HashSet::new();
+                vec_intern_modules_aux.push(set_inter_modules_aux);
+                vec_intern_is_empty_aux.push(false);
+            }
+            modules.push(vec_intern_modules_aux);
+            is_empty.push(vec_intern_is_empty_aux);
+        }
+
+        for n in module {
+            let c_w_n = g.color_of(w, n); // first color
+            let c_n_w = g.color_of(n, w); // second color
+
+            modules.get_mut(c_w_n as usize).unwrap().get_mut(c_n_w as usize).unwrap().insert(n);
+
+            if *is_empty.get(c_w_n as usize)
+                .unwrap()
+                .get(c_n_w as usize)
+                .unwrap()
+            {
+                is_empty.get_mut(c_w_n as usize)
+                    .unwrap()
+                    .push(false);
+            }
+        }
+
+        let mut flattened: Vec<HashSet<u64>> = Vec::new();
+        for m in modules {
+            for s in m {
+                if !s.is_empty() {
+                    flattened.push(s);
+                }
+            }
+        }
+        flattened
+    }
+\end{lstlisting}
+
+In Arguments, we have:
+\begin{itemize}
+    \item `g': A reference to a `TwoStructure' representing the graph.
+    \item `w': A node in the graph used as a reference for partitioning.
+    \item `module': A reference to a `HashSet<usize>' representing the module (subset of nodes) to be partitioned.
+\end{itemize}
+
+and return a `Vec\textless HashSet\textless usize\textgreater\textgreater' where each `HashSet\textless usize\textgreater' represents a submodule resulting from the partitioning process.
+
+
+\subsubsection{Modular decomposition}
+
+The `modular\_decomposition' function aims to decompose a graph into its modular components using a specified total order if provided.
+It returns a hierarchical structure representing the modular decomposition.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the modular decomposition with Rust}, label={lst:rust-define-modular-decomposition}, firstnumber=1]
+    fn modular_decomposition(g: &mut TwoStructure, total_order: Option<Vec<u64>>) -> TreeNode {
+        if g.nodes.len() == 1 {
+            let mut root = TreeNode::new();
+            root.node_type = "LEAF".to_string();
+            let iter = g.nodes.iter();
+            let cloned_set: HashSet<u64> = iter.cloned().collect();
+            root.node_id = Some(pickup(cloned_set));
+            return root;
+        }
+
+        let mut total_order = total_order.unwrap_or_else(|| compute_total_order(g));
+        total_order.retain(|&n| g.nodes.contains(&n));
+        if total_order.is_empty() {
+            total_order = compute_total_order(g);
+        }
+
+        let mut v = None;
+        while let Some(node) = total_order.pop() {
+            if g.nodes.contains(&node) {
+                v = Some(node);
+                break;
+            }
+        }
+        let v = v.expect("No valid node found");
+
+        let mods = maximal_modules(g, v);
+        let mut qg = build_quotient(g, mods, v);
+        let dg = build_distinction_graph(&mut qg, v);
+        let mut cg = ComponentGraph::new(dg);
+
+        let mut root = TreeNode::new();
+        let mut u = &mut root;
+        u.prime_graph = Some(qg.clone());
+
+        while !cg.is_empty() {
+            let mut w = TreeNode::new();
+            w.node_type = "LEAF".to_string();
+            w.node_id = Some(v);
+            u.add_child(w);
+
+            // get a mutable reference to the last child
+            let u_ref = u;
+            u = u_ref.children.last_mut().unwrap();
+
+            let sinks = cg.remove_sinks();
+            let mut fmodules: HashSet<u64> = HashSet::new();
+            for sink in &sinks {
+                for &mod_ in sink {
+                    fmodules.insert(mod_);
+                }
+            }
+
+            if sinks.len() == 1 && fmodules.len() > 1 {
+                u.node_type = "PRIME".to_string();
+                u.prime_graph = Some(qg.clone());
+            } else {
+                let iter = fmodules.iter();
+                let p = pickup(iter.cloned().collect());
+                let ntm = qg.node_to_module(p);
+                match ntm {
+                    Some(value) => {
+                        let x = pickup((*value).clone());
+                        if g.color_of(x, v) == g.color_of(v, x) {
+                            u.node_type = "COMPLETE".to_string();
+                            u.node_colors = vec![g.color_of(v, x)];
+                        } else {
+                            u.node_type = "LINEAR".to_string();
+                            u.node_colors = vec![g.color_of(x, v), g.color_of(v, x)];
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
+            for &fmod in &fmodules {
+                let ntm = qg.node_to_module(fmod);
+                match ntm {
+                    Some(value) => {
+                        let mut fg = g.slice((*value).clone());
+                        let dtree = modular_decomposition(&mut fg, Some(total_order.clone()));
+                        if ((u.node_type == "COMPLETE" && dtree.node_type == "COMPLETE")
+                            && (u.node_colors == dtree.node_colors))
+                            || ((u.node_type == "LINEAR" && dtree.node_type == "LINEAR")
+                            && (u.node_colors == dtree.node_colors)) {
+                            u.children.extend(dtree.children);
+                        } else {
+                            u.children.push(dtree);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+        root
+    }
+\end{lstlisting}
+
+In arguments, we have:
+\begin{itemize}
+    \item `g': A mutable reference to a `TwoStructure' representing the graph to be decomposed.
+    \item `total\_order': An optional vector of `u64' values specifying a total order of nodes.
+    If provided, this order influences the decomposition process.
+\end{itemize}
+
+and return a `TreeNode' representing the hierarchical structure of the modular decomposition.
+
+\hspace{4cm}
+
+
+The code of all methods and functions defined in this stay in my GitHub repository~\cite{rustcode};
+
+
+\section{Implementation in C++}\label{sec:implementation-in-c++}
+
+C++ is a widely-used programming language known for its performance and control over system resources.
+Here, he mainly helped me by giving me an approach to converting code from Python to Rust.
+Firstly, it allowed me to properly type each variable in the Python code, then to differentiate between passing a variable by value or by reference when calling functions, and finally, it allowed me to clearly define the lifetime of the different variables declared in each function.
+
+\subsection{Graph Representation in C++}\label{subsec:graph-representation-in-c++}
+
+For the definition of the various graphs, we mainly use the same structures as those defined in the Rust code:
+
+\subsubsection{2-structure}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the 2-Structure with C++}, label={lst:cpp-define-2-structure}, firstnumber=1]
+    class TwoStructure
+    {
+    public:
+        /// the graph of a two structure
+        set<unsigned int> nodes;
+        /// list of sets, colors[i] contains the set of edges of color i
+        vector< set< tuple<unsigned int, unsigned int> > > colors;
+        /// only for quotient graph, contains the nodes of the graph if they are modules they
+        vector< set<unsigned int> > modules;
+
+        TwoStructure() {
+            set< tuple<unsigned int, unsigned int> > s;
+            colors.push_back(s);
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{SCCNode}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCCNode with C++}, label={lst:cpp-define-sccnode}, firstnumber=1]
+    class SCCNode
+    {
+    public:
+        unsigned int vertex;
+        unsigned int index;
+        unsigned int lowlink;
+        bool on_stack;
+
+        SCCNode(unsigned int v, unsigned int i) {
+            vertex = v;
+            index = i;
+            lowlink = i;
+            on_stack = false;
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{SCC}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCC with C++}, label={lst:cpp-define-scc}, firstnumber=1]
+    template <class T>
+    class SCC
+    {
+    public:
+        T* graph;
+        unsigned int index;
+        vector<set<unsigned int>> components;
+        unsigned int comp_index;
+        vector<SCCNode*> dfs_stk;
+        map<unsigned int, SCCNode*> visited;
+
+        SCC(T* g) {
+            graph = g;
+            index = 0;
+            comp_index = 0;
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{MiniGraph}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the MiniGraph with C++}, label={lst:cpp-define-mini-graph}, firstnumber=1]
+    class MiniGraph
+    {
+    public:
+        map<unsigned int, set<unsigned int>> dico;
+
+        MiniGraph(map<unsigned int, set<unsigned int>> d) {
+            dico = d;
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{DGraph}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the DGraph with C++}, label={lst:cpp-define-d-graph}, firstnumber=1]
+    class MiniGraph
+    {
+    public:
+        map<unsigned int, set<unsigned int>> dico;
+
+        MiniGraph(map<unsigned int, set<unsigned int>> d) {
+            dico = d;
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{ComponentGraph}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the ComponentGraph with C++}, label={lst:cpp-define-component-graph}, firstnumber=1]
+    class ComponentGraph {
+    public:
+        DGraph graph;
+        vector<set<unsigned int>> components;
+        vector<set<unsigned int>> modules;
+
+        ComponentGraph(DGraph g) {
+           graph = g;
+           components = strongly_connected_components(graph);
+           modules = graph.modules;
+        }
+    };
+\end{lstlisting}
+
+\subsubsection{TreeNode}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the TreeNode with C++}, label={lst:cpp-define-tree-node}, firstnumber=1]
+    class TreeNode {
+    public:
+        string node_type;
+        unsigned int node_colors;
+        vector<TreeNode> children;
+        unsigned int node_id;
+        TwoStructure prime_graph;
+    };
+\end{lstlisting}
+
+\subsection{Functions in C++}\label{subsec:functions-in-c++}
+
+\subsubsection{Maximal modules}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining Maximale Module with C++}, label={lst:cpp-define-maximal-module}, firstnumber=1]
+    vector<set<unsigned int>> maximal_modules(TwoStructure *g, unsigned int v) {
+        set<unsigned int> init_module(g->nodes);
+        init_module.erase(v);
+        vector<set<unsigned int>> partition({init_module});
+        vector<set<unsigned int>> outsiders({set<unsigned int>({v})});
+        set<unsigned int> module;
+        int cnt = 1;
+        while (true) {
+           if (partition.empty()) {
+              throw "Empty partition (please report)";
+           }
+           // module = None
+           module.clear();
+           // bool none_module = true;
+           unsigned int index = 0;
+           for (unsigned int i = 0; i < partition.size(); i++) {
+              if (!outsiders.at(i).empty()) {
+                 // pick a module with outsiders
+                 module = partition.at(i); // that's a set of nodes
+                 // none_module = false;
+                 index = i;
+                 break;
+              }
+           }
+
+           if (module.empty()) {
+              // if there is no module left having outsiders
+              return partition;
+           }
+           // partition.remove(module)
+           auto pos_module =
+              find(partition.begin(), partition.end(), module);
+           if (pos_module != partition.end()) {
+              partition.erase(pos_module);
+           }
+           set<unsigned int> outsiders_i = outsiders.at(index);
+           // outsiders.remove(outsiders_i)
+           auto pos_outsiders_i =
+              find(outsiders.begin(), outsiders.end(), outsiders_i);
+           if (pos_outsiders_i != outsiders.end()) {
+              outsiders.erase(pos_outsiders_i);
+           }
+           unsigned int w = pickup(outsiders_i); // pick an arbitrary element
+
+           vector<set<unsigned int>> rmodules =
+              partition_module(g, w, module); // list of sets of nodes
+           for (auto & rmodule : rmodules) {
+              partition.push_back(rmodule);
+              // a = module - rmodule
+              set<unsigned int> a(module);
+              for (unsigned int rm : rmodule) {
+                 a.erase(rm);
+              }
+              /*
+              if outsiders_i != None:
+                 b = a.union(outsiders_i)
+              else:
+                 b = a
+              */
+              set<unsigned int> b(a);
+              if (!outsiders_i.empty()) {
+                 for (unsigned int o : outsiders_i) {
+                    b.insert(o);
+                 }
+              }
+              b.erase(w);
+              outsiders.push_back(b);
+           }
+        }
+        return partition; // this never happens
+    }
+
+\end{lstlisting}
+
+\subsubsection{Partition module}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Partition Module with C++}, label={lst:cpp-define-partition-module}, firstnumber=1]
+    vector<set<unsigned int>> partition_module(TwoStructure *g, unsigned int w, const set<unsigned int>& module) {
+        unsigned int colors_len = g->colors.size();
+        unsigned int i, j;
+
+        // modules = [ [set() for c in g.colors] for c_ in g.colors ]
+        vector<vector<set<unsigned int>>> modules(
+           colors_len, vector<set<unsigned int>>(colors_len, set<unsigned int>()));
+
+        // is_empty = [ [True for c in g.colors] for c_ in g.colors ]
+        vector<vector<bool>> is_empty(colors_len, vector<bool>(colors_len, true));
+
+        for (unsigned int n : module) {
+           unsigned int c_w_n = g->color_of(w, n); // first color
+           unsigned int c_n_w = g->color_of(n, w); // second color
+
+           modules.at(c_w_n).at(c_n_w).insert(n);
+
+           if (is_empty.at(c_w_n).at(c_n_w)) {
+              is_empty.at(c_w_n).at(c_n_w) = false;
+           }
+        }
+
+        // remove empty set
+        vector<set<unsigned int>> flattened;
+        for (auto & module : modules) {
+           for (auto & s : module) {
+              if (!s.empty()) {
+                 flattened.push_back(s);
+              }
+           }
+        }
+        return flattened;
+    }
+\end{lstlisting}
+
+\subsubsection{Modular decomposition}
+
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Modular Decomposition with C++}, label={lst:cpp-define-modular-decomposition}, firstnumber=1]
+    TreeNode modular_decomposition(TwoStructure g) {
+        if (g.nodes.size() <= 1) {
+           TreeNode root;
+           root.node_type = "LEAF";
+           root.node_id = pickup(g.nodes);
+           return root;
+        }
+
+
+        // select an arbitrary node of g
+        unsigned int v = pickup(g.nodes);
+
+        // Compute the maximal modules of g wrt. v
+        vector<set<unsigned int>> mods = maximal_modules(&g, v);
+
+        // Compute the quotient structure
+        TwoStructure qg = build_quotient(g, &mods, v);
+
+
+        // Compute the 'distinguish' (?) graph wrt. the image of v
+        DGraph dg = build_distinction_graph(qg, &v);
+
+        // Compute the component graph
+        ComponentGraph cg(dg);
+
+
+        TreeNode root;
+        TreeNode *u = &root;
+        // u->quotient = qg;
+        while (!cg.is_empty()) {
+           TreeNode w;
+           u->add_child(w);
+           w.node_type = "LEAF";
+           w.node_id = v; // line missing //
+
+           vector<set<unsigned int>> sinks = cg.remove_sinks();
+           set<unsigned int> fmodules;
+
+           for (auto & sink : sinks) {
+              for (unsigned int mod : sink) {
+                 fmodules.insert(mod);
+              }
+           }
+
+           if (sinks.size() == 1 && fmodules.size() > 1) {  // Set the type of node u
+              u->node_type = "PRIME"; // one complete connected component
+              u->prime_graph = qg;
+           } else {
+                cout << "g.nodes().size() = " << fmodules.size() << endl;
+              unsigned int x = pickup(qg.node_to_module(pickup(fmodules)));
+              if (g.color_of(x, v) == g.color_of(v, x)) {
+                 u->node_type = "COMPLETE"; // sink is one
+                 u->node_colors = g.color_of(v, x);
+              } else {
+                 u->node_type = "LINEAR"; // sinks maybe one or more
+                 u->node_colors = g.color_of(x, v);
+                 // dans le code python, on a u.node_colors = {g.color_of(c, v),
+                 // g.color_of(v, x)} u->node_colors est un entier représentant
+                 // une couleur ou un ensemble ???
+              }
+           }
+
+           // Recursive calls
+           // fmodule == fmod
+           for (unsigned int fmodule : fmodules) {
+              TwoStructure fg = g.slice(qg.node_to_module(fmodule));
+
+              TreeNode dtree = modular_decomposition(fg);
+
+              if (((u->node_type == "COMPLETE" && dtree.node_type == "COMPLETE") && (u->node_colors == dtree.node_colors))
+                        || (u->node_type == "LINEAR" && dtree.node_type == "LINEAR") && (u->node_colors == dtree.node_colors)) {
+                 for (auto & child : dtree.children) {
+                    u->children.push_back(child);
+                 }
+              } else {
+                 u->children.push_back(dtree);
+              }
+           }
+           u = &w;
+        }
+
+        return root;
+    }
+\end{lstlisting}
+
+
