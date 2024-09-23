@@ -84,7 +84,7 @@ Directed graphs are used where relationships have a direction, such as web page 
 
 \section{Definition of Modular Decomposition}\label{sec:definition-of-modular-decomposition}
 
-\subsection*{Definition of module}\label{subsec:definition-of-module}
+\subsection*{Module}\label{subsec:module}
 
 Modular decomposition involves partitioning the vertex set $V$ into subsets, or modules, that have specific properties relative to the rest of the graph.
 
@@ -92,11 +92,12 @@ A \textbf{module}~\cite{mdwikipedia} of a graph is a generalization of a connect
 In graph theory, a \textbf{component} of an undirected graph is a connected subgraph that is not part of any larger connected subgraph.
 The components of any graph partition its vertices into disjoint sets, and are the induced subgraphs of those sets.
 A graph that is itself connected has exactly one component, consisting of the whole graph.
+Components are sometimes called \textbf{connected components}.
 
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.40\textwidth]{images/graphs/Pseudoforest}
-    \caption{Example of Modules (A graph with three components)}
+    \caption{Example of Modules (A graph with three components) \cite{componentwikipedia}}
     \label{fig:example-modules}
 \end{figure}
 
@@ -112,7 +113,7 @@ Reachability is an equivalence relation, since:
 \begin{itemize}
     \item It is \textbf{reflexive}: There is a trivial path of length zero from any vertex to itself.
     \item It is \textbf{symmetric}: If there is a path from $u$ to $v$, the same edges in the reserve order from a path from $v$ to $u$.
-    \item It is \textbf{transitive}: If there is a path from $u$ to $v$ and a path from $v$ to $w$, the two paths may be concatenated together to from a walk from $u$ to $w$.
+    \item It is \textbf{transitive}: If there is a path from $u$ to $v$ and a path from $v$ to $w$, the two paths may be concatenated together to form a walk from $u$ to $w$.
 \end{itemize}
 
 \begin{mydef}
@@ -129,9 +130,19 @@ Note that the set $V$ of vertices of a graph is a module, as are its one-element
 A graph may or may not have other modules.
 A graph is called \textbf{prime} if all of its modules are trivial.
 
-\subsection*{Modular Partition}\label{subsec:modular-partition}
+In the mathematical field of graph theory, the complement~\cite{complementgraphwikipedia} or inverse of a graph $G$ is a graph $H$ on the same vertices such that two distinct vertices of $H$ are adjacent if and only if they are not adjacent in $G$.
+That is, to generate the complement of a graph, one fills in all the missing edges required to form a complete graph, and removes all the edges that were previously there.
+The complement is not the set complement of the graph; only the edges are complemented.
 
-\subsubsection*{Definition of Modular Partition}
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.40\textwidth]{images/graphs/Pseudoforest}
+    \caption{The Petersen graph (on the left) and its complement graph (on the right) \cite{complementgraphwikipedia}}
+    \label{fig:the}
+\end{figure}
+
+
+\subsection*{Modular Partition}\label{subsec:modular-partition}
 
 In graph theory, partitioning a graph into meaningful substructures is a common strategy for simplifying complex problems.
 A modular partition specifically refers to dividing the vertices of a graph into disjoint subsets, known as modules, where each subset satisfies certain uniformity conditions relative to the rest of the graph.
@@ -154,23 +165,27 @@ Modular partitions possess several important properties that make them useful fo
     By recursively partitioning modules into smaller modules, one can build a modular decomposition tree that captures the multi-level structure of the graph.
 \end{enumerate}
 
-\subsubsection*{Examples of Modular Partitions}
-
 To illustrate the concept of modular partitions, consider the following examples:
 
-\paragraph*{Example 1: Simple Undirected Graph}
+\begin{myex}[Simple Undirected Graph]
+    Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph}.
 
-Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph}.
+    In this graph, the sets $\{v2, v3, v4\}$ and $\{v6, v7\}$ each form modules.
+    The non trivial modules are: $\{2, 3\}, \{2, 3, 4\}, \{6, 7\}, \{10, 11\}, \{8, 9, 10, 11\}$.
+    Possible modular partition are:
+    \begin{itemize}
+        \item $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9, v10, v11\}\}$
+        \item $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\}, \{v8\}, \{v9\}, \{v10, v11\}\}$
+    \end{itemize}
+    The last one is the maximal modular partition.
+\end{myex}
 
-In this graph, the sets $\{v2, v3, v4\}$ and $\{v6, v7\}$ each form modules.
-Thus, a possible modular partition of $G$ is $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9, v10, v11\}\}$.
+\begin{myex}[Directed Graph]
+    Consider a directed graph $G$ from Figure~\ref{fig:example-directed-graph}.
 
-\paragraph*{Example 2: Directed Graph}
-
-Consider a directed graph $G$ from Figure~\ref{fig:example-directed-graph}.
-
-In this graph, the sets $\{2, 3\}$, $\{4, 5\}$, and $\{6, 7, 8\}$ each form modules.
-Thus, a possible modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6, 7, 8\}\}$.
+    In this graph, the sets $\{2, 3\}$, $\{4, 5\}$, and $\{6, 7, 8\}$ each form modules.
+    Thus, a possible modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6, 7, 8\}\}$.
+\end{myex}
 
 \subsection*{Maximal Modular Partition}\label{subsec:maximal-modular-partition}
 
@@ -189,8 +204,6 @@ Prime modules are those that cannot be further decomposed into smaller non-trivi
 Modular decomposition extends naturally to 2-structures, which are complete directed graphs with arcs colored from a set of $k$ colors.
 The additional complexity of orientation and coloring requires modified definitions and algorithms for modular decomposition.
 
-\subsection*{Definition of 2-structures}
-
 A 2-structure is a generalization of a graph where edges (or arcs) between vertices are assigned different colors or types, capturing more complex relationships between vertices.
 This concept is particularly useful in scenarios where the simple binary relationship (edge or no edge) in standard graphs is insufficient to model the nuances of the interactions between entitites.
 
@@ -204,7 +217,7 @@ This concept is particularly useful in scenarios where the simple binary relatio
 
 In a 2-structure, the arc $(u, v, c)$ indicates a directed relationship from vertex $u$ to vertex $v$ with a specific color or type $c$.
 
-\subsection*{Properties of 2-Structures}
+thus follows the properties of the 2-structures:
 
 \begin{enumerate}
     \item \textbf{Directed and Colored Arcs:} Unlike standard graphs where edges are typically uncolored, 2-structures have arcs that are both directed and colored.
@@ -215,44 +228,44 @@ In a 2-structure, the arc $(u, v, c)$ indicates a directed relationship from ver
     A directed graph is a 2-structure where arcs are colored uniformly.
 \end{enumerate}
 
-\subsection*{Example of a 2-Structure}
+\begin{myex}[2-Structure]
+    Consider a 2-structure $G$ with vertices $V = \{u, v, w, x\}$ and arcs $A = \{(u, v, 1), (u, w, 1), (v, w, 2), (w, x, 1)\}$, where the third element in each triple represents the color of the arc.
 
-Consider a 2-structure $G$ with vertices $V = \{u, v, w, x\}$ and arcs $A = \{(u \rightarrow v, 1), (u \rightarrow w, 1), (v \rightarrow w, 2), (w \rightarrow x, 1)\}$, where the third element in each triple represents the color of the arc.
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=0.40\textwidth]{images/graphs/2_structure_graph_example}
+        \caption{Example of 2 Structure Graph}
+        \label{fig:2-structure-graph-example-simple}
+    \end{figure}
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.40\textwidth]{images/graphs/2_structure_graph_example}
-    \caption{Example of 2 Structure Graph}
-    \label{fig:2-structure-graph-example-simple}
-\end{figure}
-
-In this 2-structure:
-\begin{itemize}
-    \item The set of vertices $V$ is $\{u, v, w, x\}$
-    \item The set of arcs $A$ includes:
+    In this 2-structure:
     \begin{itemize}
-        \item $(u \rightarrow v, 1)$ indicating a type-1 arc from $u$ to $v$.
-        \item $(u \rightarrow w, 1)$ indicating a type-1 arc from $u$ to $w$.
-        \item $(v \rightarrow w, 2)$ indicating a type-2 arc from $v$ to $w$.
-        \item $(w \rightarrow x, 1)$ indicating a type-1 arc from $w$ to $x$.
+        \item The set of vertices $V$ is $\{u, v, w, x\}$
+        \item The set of arcs $A$ includes:
+        \begin{itemize}
+            \item $(u, v, 1)$ indicating a type-1 arc from $u$ to $v$.
+            \item $(u, w, 1)$ indicating a type-1 arc from $u$ to $w$.
+            \item $(v, w, 2)$ indicating a type-2 arc from $v$ to $w$.
+            \item $(w, x, 1)$ indicating a type-1 arc from $w$ to $x$.
+        \end{itemize}
     \end{itemize}
-\end{itemize}
+\end{myex}
 
 Another example of 2-structure from directed graph from Figure~\ref{fig:example-directed-graph} is:
+\begin{myex}[Another 2-structure]
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=0.30\textwidth]{images/graphs/digraph_ex1}
+        \caption{Example of 2 Structure Graph}
+        \label{fig:2-structure-graph-example}
+    \end{figure}
+\end{myex}
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.30\textwidth]{images/graphs/digraph_ex1}
-    \caption{Example of 2 Structure Graph}
-    \label{fig:2-structure-graph-example}
-\end{figure}
-
-\subsubsection{modules}
 
 The definition of modules in 2-structures incorporates both the direction and color of arcs.
 
 \begin{mydef}
-    A module $M$ in a 2-structure $G$ is a subset of vertices such that for any $u, v \in M$ and any $w \in V - M$, the arcs $(w, u)$ and $(w, v)$ have the same color and direction, and the arcs $(u, w)$ and $(v, w)$ have the same color and direction.
+    A module $M$ in a 2-structure $G$ is a subset of vertices such that for any $u, v \in M$ and any $w \in V - M$, the arcs $(w, u, c)$ and $(w, v, c)$ have the same color and direction, and the arcs $(u, w, c)$ and $(v, w, c)$ have the same color and direction.
 \end{mydef}
 
 
@@ -260,7 +273,10 @@ The definition of modules in 2-structures incorporates both the direction and co
 
 To illustrate the concept of modular decomposition, consider the following examples.
 
-\subsection*{Example 1: Simple Undirected Graph}\label{subsec:example-1:-simple-undirected-graph}
+% \subsection*{Example 1: Simple Undirected Graph}\label{subsec:example-1:-simple-undirected-graph}
+
+\begin{myex}[Simple Undirected Graph]
+    \label{ex:simple-undirected-graph}
 
 Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph}, the modules of this graph are:
 
@@ -279,15 +295,16 @@ Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph},
     \label{fig:example-undirected-graph-module}
 \end{figure}
 
-The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9, v10, v11\}\}$.
+The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\}, \{v8\}, \{v9\}, \{v10, v11\}\}$.
+\end{myex}
 
-\subsection*{Example 2: Directed Graph (2-structure)}\label{subsec:example-2:-directed-graph}
+\begin{myex}[Directed Graph (2-structure)]
+    Consider a directed graph $G$ from Figure~\ref{fig:2-structure-graph-example}.
 
-Consider a directed graph $G$ from Figure~\ref{fig:2-structure-graph-example}.
+    The modules of this graph are $\{2, 3\}$, $\{4, 5\}$, $\{6\}$ and $\{7, 8\}$
 
-The modules of this graph are $\{2, 3\}$, $\{4, 5\}$, $\{6\}$ and $\{7, 8\}$
-
-The maximal modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6\}, \{7, 8\}\}$.
+    The maximal modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6\}, \{7, 8\}\}$.
+\end{myex}
 
 
 \section{Modular Decomposition Tree}\label{sec:modular-decomposition-tree}

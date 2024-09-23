@@ -1,14 +1,22 @@
 %! Author = adrien koumgang tegantchouang
 %! Date = 09/07/24
 
-\chapter{Previous Work (Implementation in SageMath and Python)}\label{ch:previous-work-(implementation-in-sagemath-and-python)}
+\chapter{Previous Work: Implementation in SageMath and Python}\label{ch:previous-work-implementation-in-sagemath-and-python}
+
+\section{Implementation in SageMath}\label{sec:implementation-in-sagemath}
+
+SageMath is built out of hundreds of open-source packages and features a unified interface.
+SageMath can be used to study elementary and advanced, pure and applied mathematics.
+This includes a huge range of mathematics, including basic algebra, calculus, elementary to very advanced number theory, cryptography, numerical computation, commutative algebra, group theory, combinatorics, graph theory, exact linear algebra and much more.
+It combines various software packages and seamlessly integrates their functionality into a common experience.
+It is well-suited for education and research.
 
 
-Eleni Pistiloglou, in her ``Rapport de projet'' for the Master 1 Informatique, parcours STL, has made significant contributions to modular decomposition implementation by implementing modular decomposition algorithms in Python.
+\section{Overview of Eleni Pistiloglou's Project and implementation in Python}\label{sec:overview-of-eleni-pistiloglou's-project-and-implementation-in-python}
+
+Eleni Pistiloglou, in her ``Rapport de projet''\cite{DM2S} for the Master 1 Informatique, parcours STL, has made significant contributions to modular decomposition implementation by implementing modular decomposition algorithms in Python.
 Its implementation follows that of SageMath and its role is to improve the performance of the SageMath implementation.
 This section provides an overview of her work, highlighting the methodologies and results of her implementations, which later served as a foundation for my work in converting the Python implementation to Rust.
-
-\section{Overview of Eleni Pistiloglou's Project}\label{sec:overview-of-eleni-pistiloglou's-project}
 
 Eleni Pistiloglou's project focuses on the modular decomposition of 2-structures, specifically directed graphs with colored arcs.
 Her work involves:
@@ -18,76 +26,8 @@ Her work involves:
     \item Evaluating and comparing the performance of these implementations in Python.
 \end{itemize}
 
-
-To make his Python implementation, Eleni Pistiloglou first converted Ehrenfeucht's original algorithm into a pseudo-algorithm with the same characteristics and performance.
-Here's the algorithm:
-
-\begin{algorithm}
-    \begin{algorithmic}
-        \Function{modular\_decomposition}{$v$, $E$}
-            \State Create a node $t$ in the decomposition tree
-            \State \Call{decompose}{$t, V$}
-            \State \Return $t$
-        \EndFunction
-    \end{algorithmic}\label{alg:modular-decomposition}
-\end{algorithm}
-
-\begin{algorithm}
-    \begin{algorithmic}
-        \Function{decompose}{$t$, $V$}
-            \If{$\|V\| = 1$}
-                \State $t = V$
-            \Else
-                \State $u \coloneqq t$
-                \State Choose $v \in V$ at random
-                \State $P = $ \Call{partition}{$V - {v},\, v$}
-                \State Create the $G$, $G'$ and $G''$ graphs from $P$
-                \While{$G'' != \emptyset$}
-                    \State Remove the wells $p_1, \dots, p_n = Y$ in $G''$
-                    \State \Call{treat}{$u, Y$}
-                    \State Create an empty son $u'$ from $u$
-                    \State $u \coloneqq u'$
-                \EndWhile
-                \State $u = \{v\}$
-            \EndIf
-        \EndFunction
-    \end{algorithmic}\label{alg:decompose}
-\end{algorithm}
-
-
-\begin{algorithm}
-    \begin{algorithmic}
-        \Function{treat}{$u, Y$}
-            \If{$|Y| = 1$ \textbf{and} $|p\_1| > 1$}
-                \State // If there is only one well that contains more than a module
-                \State \Call{label}{u} $=$ 'PRIME'
-            \ElsIf{The color of a $V$ to $F$ arc is the same of $F$ to $v$ arc}
-            \State \Call{label}{$u$} $=$ 'COMPLETE'
-            \State \Call{color}{$u$} $=$ \Call{color}{$v, F$}
-            \Else
-                \State \Call{label}{$u$} $= 'LINEAR'$
-                \State \Call{color}{$u$} $[$ \Call{color}{$v, F_1$}, \Call{color}{$F_1, v$} $]$
-                \State // F1 is a module of F
-            \EndIf
-
-            \For{any module $M \in \bigcup_{p_i}$}
-                \State $t' =$ \Call{modular\_decomposition}{$M$}
-                \State // fusion
-            \EndFor
-
-            \If{$u$ and $t'$ are complete and the same color \textbf{or} linear and the same color}
-                \State Add the sons of $t'$ to the sons of $u$
-            \Else
-                \State Add to the sons of $u$
-            \EndIf
-        \EndFunction
-    \end{algorithmic}\label{alg:treat}
-\end{algorithm}
-
-
-\section{Implementation in Python}\label{sec:implementation-in-python}
-
 Python, a high-level programming language known for its simplicity and versatility, was also used by Pistiloglou to implement the modular decomposition algorithm.
+The following are the results.
 
 Firstly, it refers to the fact that the initial version of the code defines a TwoStructure class to represent a 2-structure that uses a dictionary to store arcs, whose key is the source index and whose value is a dictionary containing the destinations associated with the colour.
 So the call to the function that decides whether a node distinguishes two others requires access to the values of both dictionaries.
@@ -97,7 +37,7 @@ So her first attempt was to determine the most suitable data structures for repr
 
 The second version proposes an improved implementation of these functions that is possible using only sets or lists.
 Sets are preferred over lists because their elements can be retrieved in $O(1)$ time thanks to hashing, unlike a search in a list, which is performed in $O(n)$ time.
-Since the number of colours in a 2-structure is much smaller than the number of its arcs, a storage system that associates colours with source-destination pairs would improve the speed of calculation, which would be carried out in $O(K) \cdot O(1)$ time.
+Since the number of colours in a 2-structure is much smaller than the number of its arcs, a storage system that associates colours with source-destination pairs would improve the speed of calculation, which would be carried out in $O(K) \cdot O(1)$ time with k the number of arc colors in the graph.
 A bucket-sort solution stores each arc in an arc set that contains only arcs of the same colour.
 The sets are stored in a list whose index corresponds to the colour of the arcs contained in that set.
 The code for these two versions is available in her report.

@@ -7,11 +7,11 @@
 The implementation of the modular decomposition algorithm in Rust was motivated by the need to overcome performance limitations observed in previous implementation in Python.
 The primary motivation for implementing the modular decomposition algorithm in Rust was to achieve better performance and scalability for large and complex graphs.
 As described on the official Rust website, we have that Rust is blazingly fast and memory-efficient: with no runtime or garbage collector, it can power performance-critical services, run on embedded devices, and easily integrate with other languages.
-Rust's rich type system and ownership model guarantee memory-safety and thread-safety -- enabling you to eliminate many classes of buges at compile-time.
+Rust's rich type system and ownership model guarantee memory-safety and thread-safety -- enabling you to eliminate many classes of bugs at compile-time.
 In brief, Rust is a programming language that adopts a very specific programming philosophy, mainly thanks to its ownership principle, which ensures memory safety without needing a garbage collector.
 Ownership governs how memory is managed and how different parts of a program can access and modify data.
 
-the key principles of ownership in Rust are~\cite{rust}:
+The key principles of ownership in Rust are~\cite{rust}:
 \begin{itemize}
     \item \textbf{Ownership Rules}
     \begin{itemize}
@@ -21,7 +21,7 @@ the key principles of ownership in Rust are~\cite{rust}:
     \end{itemize}
     \item \textbf{Borrowing and References}
     \begin{itemize}
-        \item He can borrow a value by creating a reference to it using `\&'.
+        \item A variable can borrow a value by creating a reference to it using `\&'.
         \item Borrowing can be either immutable (`\&T') or mutable (`\&mut T').
         \item Multiple immutable references are allowed, but only one mutable reference is allowed at a time.
     \end{itemize}
@@ -36,7 +36,9 @@ the key principles of ownership in Rust are~\cite{rust}:
     \end{itemize}
     \item \textbf{Lifetimes}
     \begin{itemize}
-        \item Lifetimes are a way to ensure that references are valid as long as they are needed.
+        \item Every ownership and every borrowing has a ``lifetime", which is the portion of the program along which it is active.
+        \item Lifetimes are used by the Borrow Checker to check statically that the above rules are respected.
+        \item Lifetimes ensure that references are valid as long as they are needed.
         \item They help the compiler reason about how long references should be valid and prevent dangling references.
     \end{itemize}
 \end{itemize}
@@ -47,7 +49,7 @@ Many of the functions to be translated, especially the main one, were recursive,
 As a result, I quickly ran into difficulties writing the code in Rust.
 To overcome this, I turned to a programming language that has strongly influenced Rust: C++~\cite{cpp}.
 
-This chapter provides an in-depth discussion of the methodologies, challenges and results associated with the implementation in Rust and the reasons why I decided to implement also in C++.
+This chapter provides an in-depth discussion of the methodologies, challenges and results associated with the implementation in Rust and the reasons why I decided to implement the algorithm also in C++.
 
 
 \section{Implementation in Rust: Graph Representation, Algorithm Design and Optimization Techniques}\label{sec:implementation-in-rust:-graph-representation-algorithm-design-and-optimization-techniques}
@@ -60,8 +62,8 @@ For the representation of the various graphs used during the execution of the mo
 
 \subsubsection{2-structure}
 
-we therefore have the following definition for the representation of a 2-structure:
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the 2-structure with Rust}, label={lst:rust-define-twostructure}, firstnumber=1]
+We therefore have the following definition for the representation of a 2-structure:
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the 2-structure}, label={lst:rust-define-twostructure}, firstnumber=1]
     #[derive(Debug)]
     #[derive(Clone)]
     pub struct TwoStructure {
@@ -73,22 +75,22 @@ we therefore have the following definition for the representation of a 2-structu
         pub modules: Vec<HashSet<u64>>,
     }
 \end{lstlisting}
-where we have:
+Where we have:
 \begin{itemize}
-    \item \textbf{nodes}: the graph of a two structure
+    \item \textbf{nodes}: the nodes of a two structure
     \item \textbf{colors}: list of sets, colors[i] contains the set of edges of color i
     \item \textbf{modules}: only for quotient graph, contains the nodes of the graph if they are modules
 \end{itemize}
 
 \subsubsection{SCC}
 
-SCC, for Strongly Connected Components, is a structure that takes a graph as input and determines the `strongly connected components' of this graph using its two visit and compute functions.
+SCC, for Strongly Connected Components, is a structure that takes a graph as input and determines the `strongly connected components' of this graph using its two visit\ref{subsubsec:visit-for-scc-structure} and compute\ref{subsubsec:compute-for-scc-structure} functions.
 For doing this, we use `Tarjan's strongly connected components algorithm'~\cite{sccalgowikipedia}.
 Tarjan's strongly connected components algorithm is an algorithm in graph theory for finding the strongly connected components (SCCs) of a directed graph.
 It runs in linear time, matching the time bound for alternative methods including Kosaraju's algorithm and the path-based strong component algorithm.
 The algorithm is named for its inventor, Robert Tarjan.
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCC with Rust}, label={lst:rust-define-scc}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCC}, label={lst:rust-define-scc}, firstnumber=1]
     pub struct SCC<'a> {
         pub graph: Box<dyn GraphTrait + 'a>,
         pub index: u64,
@@ -124,7 +126,7 @@ where GraphTrait is:
 
 \subsubsection{SCCNode}
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCCNode with Rust}, label={lst:rust-define-sccnode}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the SCCNode}, label={lst:rust-define-sccnode}, firstnumber=1]
     #[derive(Clone, Copy)]
     pub struct SCCNode {
         // original vertex ... must be hashable and unique (among vertices)
@@ -150,7 +152,7 @@ where GraphTrait is:
 
 \subsubsection{MiniGraph}
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Minigraph with Rust}, label={lst:rust-define-minigraph}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Minigraph}, label={lst:rust-define-minigraph}, firstnumber=1]
     #[derive(Debug)]
     pub struct MiniGraph {
         dico: HashMap<u64, HashSet<u64>>,
@@ -159,7 +161,7 @@ where GraphTrait is:
 
 \subsubsection{DGraph}
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the DGraph with Rust}, label={lst:rust-define-dgraph}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the DGraph}, label={lst:rust-define-dgraph}, firstnumber=1]
     #[derive(Debug)]
     pub(crate) struct DGraph {
         nodes: HashSet<usize>,
@@ -176,7 +178,7 @@ where GraphTrait is:
 
 \subsubsection{ComponentGraph}
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Component Graph with Rust}, label={lst:rust-define-component-graph}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Component Graph}, label={lst:rust-define-component-graph}, firstnumber=1]
     #[derive(Debug)]
     struct ComponentGraph {
         graph: DGraph,
@@ -193,7 +195,7 @@ where GraphTrait is:
 
 \subsubsection{TreeNode}
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the TreeNode with Rust}, label={lst:rust-define-treenode}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the TreeNode}, label={lst:rust-define-treenode}, firstnumber=1]
     #[derive(Debug)]
     struct TreeNode {
         node_type: String,
@@ -217,11 +219,97 @@ where GraphTrait is:
 Each of these data structures defined above implements functionality.
 Here, we'll look at the ones that are most important during the modular decomposition.
 
+\subsubsection{Compute for SCC structure}\label{subsubsec:compute-for-scc-structure}
+
+The compute method is the entry point of the algorithm.
+It iterates over all vertices of the graph and initiates the depth-first search (DFS) from any vertex that has not been visited yet.
+The main goal of this method is to ensure that every node in the graph is processed and all SCCs are identified.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the TreeNode}, label={lst:rust-define-compute}, firstnumber=1]
+    impl<'a> SCC<'a>
+    {
+        pub fn compute(&mut self) {
+            for v in self.graph.vertices() {
+                if self.visited.contains_key(&v) {
+                    continue;
+                }
+                // v has not been visited
+                let mut vnode = SCCNode::new(v, self.index);
+                self.index += 1;
+                vnode.on_stack = true;
+                self.visited.insert(v, vnode);
+                vnode.on_stack = false;
+                self.visit(&RefCell::new(vnode));
+            }
+        }
+    }
+\end{lstlisting}
+
+\subsubsection{Visit for SCC structure}\label{subsubsec:visit-for-scc-structure}
+
+The visit method is where the depth-first search (DFS) happens.
+It traverses the graph and updates the ``low-link” values that help determine the root of a strongly connected component.
+The low-link value of a node is the smallest index reachable from that node, and it plays a critical role in identifying SCCs.
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the Component Graph}, label={lst:rust-define-visit}, firstnumber=1]
+    impl<'a> SCC<'a>
+    {
+        pub fn visit(&mut self, node: &RefCell<SCCNode>) -> SCCNode {
+            let mut vnode = node.borrow_mut();
+            
+            vnode.on_stack = true;
+            self.dfs_stk.push(*vnode);
+    
+            let s = self.graph.successors(vnode.vertex);
+            match s {
+                Some(h) => {
+                    for w in h.clone() {
+                        if !self.visited.contains_key(&w) {
+                            // recurse
+                            let mut wnode = SCCNode::new(w, self.index);
+                            self.index += 1;
+                            wnode.on_stack = true;
+                            self.visited.insert(w, wnode);
+                            wnode.on_stack = false;
+                            wnode = self.visit(&RefCell::new(wnode));
+                            vnode.lowlink = min(vnode.lowlink, wnode.lowlink);
+                        } else {
+                            let wnode = self.visited.get(&w).unwrap();
+                            if wnode.on_stack {
+                                vnode.lowlink = min(vnode.lowlink, wnode.index);
+                            }
+                        }
+                    }
+    
+                    if vnode.lowlink == vnode.index {
+                        let mut component = HashSet::new();
+                        loop {
+                            let mut wnode = self.dfs_stk.pop().unwrap();
+                            wnode.on_stack = false;
+                            self.visited.get_mut(&(wnode.vertex)).unwrap().on_stack = false;
+                            component.insert(wnode.vertex);
+                            // if wnode is vnode
+                            if wnode.vertex == vnode.vertex {
+                                break;
+                            }
+                        }
+    
+                        self.components.push(component);
+                    }
+                }
+                _ => {}
+            }
+    
+            *vnode
+        }
+    }
+\end{lstlisting}
+
 \subsubsection{Maximal modules}
 
 The `maximal\_modules' function aims to find all maximal modules (subsets of nodes) in a graph that include a specific node `v'.
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the maximal modules with Rust}, label={lst:rust-define-maximal-modules}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the maximal modules}, label={lst:rust-define-maximal-modules}, firstnumber=1]
     /// constructs M(g, v) according to the algorithm 3.1 of the article [1]
     ///
     /// # Arguments
@@ -319,7 +407,7 @@ and return a `Vec\textless HashSet\textless usize\textgreater\textgreater' where
 
 The `partition\_module' function aims to divide a given module (subset of nodes) into smaller submodules based on certain criteria related to the relationships between nodes in a graph.
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the partition module with Rust}, label={lst:rust-define-partition module}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the partition module}, label={lst:rust-define-partition module}, firstnumber=1]
     /// Partitions module in strong maximal modules
     ///
     /// # Arguments
@@ -395,7 +483,7 @@ and return a `Vec\textless HashSet\textless usize\textgreater\textgreater' where
 The `modular\_decomposition' function aims to decompose a graph into its modular components using a specified total order if provided.
 It returns a hierarchical structure representing the modular decomposition.
 
-\begin{lstlisting}[language=Rust, style=rust, caption={Defining the modular decomposition with Rust}, label={lst:rust-define-modular-decomposition}, firstnumber=1]
+\begin{lstlisting}[language=Rust, style=rust, caption={Defining the modular decomposition}, label={lst:rust-define-modular-decomposition}, firstnumber=1]
     fn modular_decomposition(g: &mut TwoStructure, total_order: Option<Vec<u64>>) -> TreeNode {
         if g.nodes.len() == 1 {
             let mut root = TreeNode::new();
@@ -520,7 +608,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{2-structure}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the 2-Structure with C++}, label={lst:cpp-define-2-structure}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the 2-Structure}, label={lst:cpp-define-2-structure}, firstnumber=1]
     class TwoStructure
     {
     public:
@@ -540,7 +628,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{SCCNode}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCCNode with C++}, label={lst:cpp-define-sccnode}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCCNode}, label={lst:cpp-define-sccnode}, firstnumber=1]
     class SCCNode
     {
     public:
@@ -560,7 +648,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{SCC}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCC with C++}, label={lst:cpp-define-scc}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the SCC}, label={lst:cpp-define-scc}, firstnumber=1]
     template <class T>
     class SCC
     {
@@ -582,7 +670,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{MiniGraph}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the MiniGraph with C++}, label={lst:cpp-define-mini-graph}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the MiniGraph}, label={lst:cpp-define-mini-graph}, firstnumber=1]
     class MiniGraph
     {
     public:
@@ -610,7 +698,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{ComponentGraph}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the ComponentGraph with C++}, label={lst:cpp-define-component-graph}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the ComponentGraph}, label={lst:cpp-define-component-graph}, firstnumber=1]
     class ComponentGraph {
     public:
         DGraph graph;
@@ -627,7 +715,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{TreeNode}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the TreeNode with C++}, label={lst:cpp-define-tree-node}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the TreeNode}, label={lst:cpp-define-tree-node}, firstnumber=1]
     class TreeNode {
     public:
         string node_type;
@@ -642,7 +730,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{Maximal modules}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining Maximale Module with C++}, label={lst:cpp-define-maximal-module}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining Maximale Module}, label={lst:cpp-define-maximal-module}, firstnumber=1]
     vector<set<unsigned int>> maximal_modules(TwoStructure *g, unsigned int v) {
         set<unsigned int> init_module(g->nodes);
         init_module.erase(v);
@@ -719,7 +807,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{Partition module}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Partition Module with C++}, label={lst:cpp-define-partition-module}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Partition Module}, label={lst:cpp-define-partition-module}, firstnumber=1]
     vector<set<unsigned int>> partition_module(TwoStructure *g, unsigned int w, const set<unsigned int>& module) {
         unsigned int colors_len = g->colors.size();
         unsigned int i, j;
@@ -757,7 +845,7 @@ For the definition of the various graphs, we mainly use the same structures as t
 
 \subsubsection{Modular decomposition}
 
-\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Modular Decomposition with C++}, label={lst:cpp-define-modular-decomposition}, firstnumber=1]
+\begin{lstlisting}[language=C++, style=cpp, caption={Defining the Modular Decomposition}, label={lst:cpp-define-modular-decomposition}, firstnumber=1]
     TreeNode modular_decomposition(TwoStructure g) {
         if (g.nodes.size() <= 1) {
            TreeNode root;

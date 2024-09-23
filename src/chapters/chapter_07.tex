@@ -4,3 +4,53 @@
 
 \chapter{Conclusion}\label{ch:conclusion}
 
+This thesis has delved into the intricate and powerful concept of modular decomposition in graph theory, focusing on both the theoretical framework and its practical implementations.
+The modular decomposition of graphs is a fundamental technique that simplifies the structural analysis of complex networks by partitioning them into smaller, more manageable subgraphs called modules.
+Through this process, computational problems in areas like bioinformatics, social network analysis, and communication networks become more tractable, allowing for more efficient algorithms to solve them.
+
+A significant portion of the research was dedicated to the exploration and implementation of modular decomposition algorithms in different programming languages, namely Python, SageMath, Rust, and C++.
+The decision to implement the algorithm in Rust stemmed from its growing reputation as a systems programming language that offers both performance and safety.
+Rust’s strict ownership model, combined with its emphasis on memory safety without the need for a garbage collector, makes it ideal for performance-critical tasks such as graph decomposition on large datasets.
+
+The Rust implementation, as demonstrated throughout this thesis, addressed some of the key performance bottlenecks identified in the earlier Python and SageMath versions.
+One of the primary challenges in Python's implementation was the inefficiency in handling large graph structures due to its reliance on dynamic typing and high-level abstractions.
+While Python is versatile and user-friendly, its inherent limitations in performance become evident when dealing with computationally intensive tasks.
+SageMath, though designed for mathematical computations and capable of handling modular decomposition with greater efficiency than Python, still lagged behind in comparison to a lower-level implementation in Rust.
+
+The transition from Python to Rust was not without its challenges.
+Rust’s ownership model and its strict borrowing rules, while advantageous in terms of preventing memory errors, required careful handling during the implementation of recursive functions and complex data structures.
+One of the key achievements of this thesis was the successful adaptation of modular decomposition algorithms to Rust’s stringent memory and concurrency requirements.
+This process not only improved the overall performance of the algorithm but also reinforced the importance of safe memory management in large-scale computational tasks.
+
+The C++ implementation that was developed in parallel turned out to present many more bugs than the Rust version, largely due to the complexities of manual memory management and the lack of built-in safety guarantees.
+In C++, issues such as memory leaks, dangling pointers, and undefined behavior were more prevalent, requiring careful debugging and additional safeguards to ensure stability.
+These problems arose because C++ does not enforce strict ownership and borrowing rules like Rust, making it easier to inadvertently introduce errors that compromise the integrity of the program.
+In contrast, Rust’s ownership model and built-in safety features, such as the borrow checker, eliminated many of these potential issues at compile-time, resulting in cleaner, more reliable code with fewer runtime errors.
+While C++ provides more flexibility and control over memory, this comes at the cost of increased complexity in maintaining bug-free code, especially in large-scale projects like graph decomposition.
+
+Benchmarking results were a pivotal part of the research.
+By testing the Rust implementation on various graph sizes, ranging from small graphs of 10 nodes to much larger graphs of 500 nodes, the thesis provided a comprehensive analysis of the algorithm’s scalability.
+The results clearly showed that Rust’s performance significantly surpassed that of Python, especially as the size of the graphs increased.
+For small graphs, the difference in execution time between Rust and Python was minimal, but as the graph size grew, Rust’s superior memory management and execution speed became more apparent.
+This finding is crucial for applications in fields where large-scale graph processing is required, such as in bioinformatics or social network analysis, where datasets can include thousands or even millions of nodes and edges.
+
+Additionally, the exploration of modular decomposition applied to 2-structures introduced an even more complex dimension to the problem.
+The thesis extended traditional graph decomposition to 2-structures, which are characterized by colored arcs, making the decomposition process more sophisticated.
+This additional complexity required further adaptation of the algorithm, which was successfully implemented in Rust, demonstrating the language's flexibility in handling complex data structures.
+
+This thesis also lays the groundwork for further investigations.
+Future work could focus on optimizing the algorithm even further, exploring parallelization techniques in Rust to handle even larger datasets or more complex graph structures.
+
+Additionally, the modular decomposition algorithm could be extended to other types of graphs and applied to real-world datasets, such as those used in social network analysis or biological networks, to further validate its effectiveness and scalability.
+An opportunity to resolve bug problems in the C++ version and test its performance against the Rust implementation.
+The latter could well offer suggestions for improving the current version of Rust.
+Ultimately, the modular decomposition of graphs, though rooted in theoretical graph theory, has broad implications across numerous domains.
+As datasets continue to grow in size and complexity, the need for efficient and scalable algorithms will only increase, and the work presented in this thesis provides a valuable tool for researchers and engineers alike.
+
+For me, this thesis work was very important because it gave me the opportunity to learn a very promising programming language, Rust.
+Nowadays, I use Rust for other applications such as distributed systems, as well as for web programming.
+It also enabled me to learn a lot about modular decomposition and the opportunities it offers in various areas of everyday life.
+Like, for example, the work following mine that my teachers told me about, that of being able to optimise the execution of processes and threads in computers.
+This could greatly increase the performance of the systems and applications we use every day.
+
+
