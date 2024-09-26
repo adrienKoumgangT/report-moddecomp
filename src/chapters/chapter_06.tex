@@ -56,22 +56,24 @@ To set up Criterion for this project, the following steps were followed:
 \end{enumerate}
 
 \begin{myex}[Example Benchmark Code Rust]
-    \begin{lstlisting}[language=Rust, style=rust, caption={Example of benchmark code for modular decomposition}, label={lst:rust-example-of-benchmark-code}, firstnumber=1]
-        use std::hint::black_box;
-        use criterion::{criterion_group, criterion_main, Criterion};
 
-        use moddecomp::two_structure::{graph_ex1, TwoStructure};
-        use moddecomp::moddecomp::moddecomp::modular_decomposition;
-
-
-        fn criterion_benchmark(c: &mut Criterion) {
-            c.bench_function("modular decomposition graph ex1", |b| b.iter(|| modular_decomposition(black_box(&mut graph_ex1()), black_box(None))));
-        }
-
-        criterion_group!(benches, criterion_benchmark);
-        criterion_main!(benches);
-    \end{lstlisting}
 \end{myex}
+
+\begin{lstlisting}[language=Rust, style=rust, caption={Example of benchmark code for modular decomposition}, label={lst:rust-example-of-benchmark-code}, firstnumber=1]
+    use std::hint::black_box;
+    use criterion::{criterion_group, criterion_main, Criterion};
+
+    use moddecomp::two_structure::{graph_ex1, TwoStructure};
+    use moddecomp::moddecomp::moddecomp::modular_decomposition;
+
+
+    fn criterion_benchmark(c: &mut Criterion) {
+        c.bench_function("modular decomposition graph ex1", |b| b.iter(|| modular_decomposition(black_box(&mut graph_ex1()), black_box(None))));
+    }
+
+    criterion_group!(benches, criterion_benchmark);
+    criterion_main!(benches);
+\end{lstlisting}
 
 \begin{itemize}
     \item \textbf{black\_box:} Ensures that the Rust compiler does not optimize away the benchmarked code, providing more accurate results.
@@ -122,22 +124,43 @@ To replicate the style of results we get from Criterion in Rust, i use the follo
 \end{itemize}
 
 \begin{myex}[Example Benchmark Code SageMath]
-    \begin{lstlisting}[language=Python, style=python, caption={Example of benchmark code for modular decomposition}, label={lst:sagemath-example-of-benchmark-code}, firstnumber=1]
-        use std::hint::black_box;
-        use criterion::{criterion_group, criterion_main, Criterion};
 
-        use moddecomp::two_structure::{graph_ex1, TwoStructure};
-        use moddecomp::moddecomp::moddecomp::modular_decomposition;
-
-
-        fn criterion_benchmark(c: &mut Criterion) {
-            c.bench_function("modular decomposition graph ex1", |b| b.iter(|| modular_decomposition(black_box(&mut graph_ex1()), black_box(None))));
-        }
-
-        criterion_group!(benches, criterion_benchmark);
-        criterion_main!(benches);
-    \end{lstlisting}
 \end{myex}
+
+\begin{lstlisting}[language=Python, style=python, caption={Example of benchmark code for modular decomposition}, label={lst:sagemath-example-of-benchmark-code}, firstnumber=1]
+    import time
+    import numpy as np
+
+    def benchmark_modular_decomposition(graph, iterations=100):
+        times = []
+
+        for _ in range(iterations):
+            # Start timer
+            start_time = time.time()
+
+            # Perform the computation
+            graph.modular_decomposition()
+
+            # Stop timer
+            end_time = time.time()
+
+            # Record execution time in microseconds (µs)
+            execution_time = (end_time - start_time)
+            times.append(execution_time)
+
+        # Calculate benchmark statistics using NumPy
+        min_time = np.min(times)
+        max_time = np.max(times)
+        mean_time = np.mean(times)
+        stdev_time = np.std(times)
+
+        # Print results in seconds (s)
+        print(f"Benchmark Results (over {iterations} iterations) in s:")
+        print(f"Min Time: {min_time:.2f} s")
+        print(f"Max Time: {max_time:.2f} s")
+        print(f"Mean Time: {mean_time:.2f} s")
+        print(f"Standard Deviation: {stdev_time:.2f} s")
+\end{lstlisting}
 
 
 \section{Result for small graphs : 10 nodes}\label{sec:result-for-small-graphs}

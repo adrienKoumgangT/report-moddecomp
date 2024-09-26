@@ -33,24 +33,25 @@ Therefore, each edge $\{u, v\}$ is an unordered pair of vertices.
 
 In undirected graphs, the edge $\{u, v\}$ is identical to the edge $\{v, u\}$, implying that the connection is bidirectional.
 
-Example~\cite{mdwikipedia}: an undirected graph $G$ with vertices $V = \{v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11\}$ and edges \\
-$E= \{\{v1, v2\}, \{v1, v3\}, \{v1, v4\}\}$
-$\cup \; \{\{v2, v4\}, \{v2, v5\}, \{v2, v6\}, \{v2, v7\}\}$ \\
-$\cup \; \{\{v3, v4\}, \{v3, v5\}, \{v3, v6\}, \{v3, v7\}\}$
-$\cup \; \{\{v4, v5\}, \{v4, v6\}, \{v4, v7\}\}$
-$\cup \; \{\{v5, v6\}, \{v5, v7\}\}$
-$\cup \; \{\{v6, v8\}, \{v6, v9\}, \{v6, v10\}, \{v6, v11\}\}$
-$\cup \; \{\{v7, v8\}, \{v7, v9\}, \{v7, v10\}, \{v7, v11\}\}$
-$\cup \; \{\{v8, v9\}, \{v8, v10\}, \{v8, v11\}\}$
-$\cup \; \{\{v9, v10\}, \{v9, v11\}\}$
+\begin{myex}[An undirected graph~\cite{mdwikipedia}]
+    An undirected graph $G$ with vertices $V = \{v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11\}$ and edges \\
+    $E= \{\{v1, v2\}, \{v1, v3\}, \{v1, v4\}\}$
+    $\cup \; \{\{v2, v4\}, \{v2, v5\}, \{v2, v6\}, \{v2, v7\}\}$ \\
+    $\cup \; \{\{v3, v4\}, \{v3, v5\}, \{v3, v6\}, \{v3, v7\}\}$
+    $\cup \; \{\{v4, v5\}, \{v4, v6\}, \{v4, v7\}\}$
+    $\cup \; \{\{v5, v6\}, \{v5, v7\}\}$
+    $\cup \; \{\{v6, v8\}, \{v6, v9\}, \{v6, v10\}, \{v6, v11\}\}$
+    $\cup \; \{\{v7, v8\}, \{v7, v9\}, \{v7, v10\}, \{v7, v11\}\}$
+    $\cup \; \{\{v8, v9\}, \{v8, v10\}, \{v8, v11\}\}$
+    $\cup \; \{\{v9, v10\}, \{v9, v11\}\}$
 
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia}
-    \caption{Example of Undirected Graph}
-    \label{fig:example-undirected-graph}
-\end{figure}
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia}
+        \caption{Example of Undirected Graph}
+        \label{fig:example-undirected-graph}
+    \end{figure}
+\end{myex}
 
 Undirected graphs are commonly used in scenarios where the relationships are mutual, such as social networks where friendships are bidirectional.
 
@@ -63,21 +64,23 @@ Therefore, each edge $(v, w)$ is an ordered pair of vertices.
 
 In directed graphs, the edge $(u, v)$ is not identical to the edge $(v, u)$, implying that the connection is unidirectional.
 
-Example: a directed graph $G$ with vertices $V = \{1, 2, 3, 4, 5, 6, 7, 8\}$ and edges \\
-$E = \{(1, 2), (1, 3)\}$
-$\cup \; \{(2, 3)\}$
-$\cup \; \{(4 , 1), (4, 2), (4, 3), (4, 6)\}$
-$\cup \; \{(5 , 1), (5, 2), (5, 3), (5, 6)\}$
-$\cup \; \{(6, 4), (6, 5), (6, 7), (6, 8)\}$
-$\cup \; \{(7, 8)\}$
-$\cup \; \{(8, 7)\}$
+\begin{myex}[A directed graph]
+    A directed graph $G$ with vertices $V = \{1, 2, 3, 4, 5, 6, 7, 8\}$ and edges \\
+    $E = \{(1, 2), (1, 3)\}$
+    $\cup \; \{(2, 3)\}$
+    $\cup \; \{(4 , 1), (4, 2), (4, 3), (4, 6)\}$
+    $\cup \; \{(5 , 1), (5, 2), (5, 3), (5, 6)\}$
+    $\cup \; \{(6, 4), (6, 5), (6, 7), (6, 8)\}$
+    $\cup \; \{(7, 8)\}$
+    $\cup \; \{(8, 7)\}$
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.40\textwidth]{images/graphs/digraph_ex1_without_label}
-    \caption{Example of Directed Graph}
-    \label{fig:example-directed-graph}
-\end{figure}
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=0.40\textwidth]{images/graphs/digraph_ex1_without_label}
+        \caption{Example of Directed Graph}
+        \label{fig:example-directed-graph}
+    \end{figure}
+\end{myex}
 
 Directed graphs are used where relationships have a direction, such as web page links (where one page links to another) or task scheduling (where one task must precede another).
 
@@ -136,7 +139,7 @@ The complement is not the set complement of the graph; only the edges are comple
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/graphs/Pseudoforest}
+    \includegraphics[width=0.40\textwidth]{images/graphs/Petersen_graph_complement}
     \caption{The Petersen graph (on the left) and its complement graph (on the right) \cite{complementgraphwikipedia}}
     \label{fig:the}
 \end{figure}
@@ -171,7 +174,15 @@ To illustrate the concept of modular partitions, consider the following examples
     Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph}.
 
     In this graph, the sets $\{v2, v3, v4\}$ and $\{v6, v7\}$ each form modules.
-    The non trivial modules are: $\{2, 3\}, \{2, 3, 4\}, \{6, 7\}, \{10, 11\}, \{8, 9, 10, 11\}$.
+    The non trivial modules are: $\{v2, v3\}, \{v2, v3, v4\}, \{v6, v7\}, \{v10, v11\}, \{v8, v9, v10, v11\}$.
+
+    \begin{figure}[!h]
+        \centering
+        \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia_module}
+        \caption{Example of Module for Simple Undirected Graph}
+        \label{fig:example-undirected-graph-module}
+    \end{figure}
+
     Possible modular partition are:
     \begin{itemize}
         \item $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9, v10, v11\}\}$
@@ -278,7 +289,7 @@ To illustrate the concept of modular decomposition, consider the following examp
 \begin{myex}[Simple Undirected Graph]
     \label{ex:simple-undirected-graph}
 
-Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph}, the modules of this graph are:
+Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph} and Figure~\ref{fig:example-undirected-graph-module}, the modules of this graph are:
 
 \begin{itemize}
     \item $\{v1\}$.
@@ -287,13 +298,6 @@ Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph},
     \item $\{v6, v7\}$.
     \item $\{v8, v9, v10, v11\}$.
 \end{itemize}
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia_module}
-    \caption{Example of Module for Simple Undirected Graph}
-    \label{fig:example-undirected-graph-module}
-\end{figure}
 
 The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\}, \{v8\}, \{v9\}, \{v10, v11\}\}$.
 \end{myex}
