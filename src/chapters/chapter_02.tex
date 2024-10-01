@@ -133,6 +133,10 @@ Note that the set $V$ of vertices of a graph is a module, as are its one-element
 A graph may or may not have other modules.
 A graph is called \textbf{prime} if all of its modules are trivial.
 
+\begin{mydef}[Prime module]
+    A prime module is a module where the subgraph induced by the vertices of the module does not admit any non-trivial decomposition into smaller modules.
+\end{mydef}
+
 In the mathematical field of graph theory, the complement~\cite{complementgraphwikipedia} or inverse of a graph $G$ is a graph $H$ on the same vertices such that two distinct vertices of $H$ are adjacent if and only if they are not adjacent in $G$.
 That is, to generate the complement of a graph, one fills in all the missing edges required to form a complete graph, and removes all the edges that were previously there.
 The complement is not the set complement of the graph; only the edges are complemented.
@@ -205,8 +209,7 @@ Prime modules are those that cannot be further decomposed into smaller non-trivi
 
 \begin{mydef}
 (Maximal modular partition)
-    The maximal modular partition of a graph $G$ is the partition consisting of the largest prime modules.
-    This partition is unique and is often represented as a tree, known as the modular decomposition tree, where each node corresponds to a module, and the leaves are the individual vertices of the graph.
+    A maximal modular partition is a partition of a graph into modules, where the modules are maximal in the sense that they cannot be further partitioned into smaller modules.
 \end{mydef}
 
 
@@ -228,7 +231,7 @@ This concept is particularly useful in scenarios where the simple binary relatio
 
 In a 2-structure, the arc $(u, v, c)$ indicates a directed relationship from vertex $u$ to vertex $v$ with a specific color or type $c$.
 
-thus follows the properties of the 2-structures:
+Here are the properties of the 2-structures:
 
 \begin{enumerate}
     \item \textbf{Directed and Colored Arcs:} Unlike standard graphs where edges are typically uncolored, 2-structures have arcs that are both directed and colored.
@@ -262,15 +265,7 @@ thus follows the properties of the 2-structures:
     \end{itemize}
 \end{myex}
 
-Another example of 2-structure from directed graph from Figure~\ref{fig:example-directed-graph} is:
-\begin{myex}[Another 2-structure]
-    \begin{figure}[!h]
-        \centering
-        \includegraphics[width=0.30\textwidth]{images/graphs/digraph_ex1}
-        \caption{Example of 2 Structure Graph}
-        \label{fig:2-structure-graph-example}
-    \end{figure}
-\end{myex}
+Another example of 2-structure from directed graph is Figure~\ref{fig:example-directed-graph}.
 
 
 The definition of modules in 2-structures incorporates both the direction and color of arcs.
@@ -289,23 +284,21 @@ To illustrate the concept of modular decomposition, consider the following examp
 \begin{myex}[Simple Undirected Graph]
     \label{ex:simple-undirected-graph}
 
-Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph} and Figure~\ref{fig:example-undirected-graph-module}, the modules of this graph are:
+Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph} and Figure~\ref{fig:example-undirected-graph-module}, the non-trivial modules of this graph are:
 
 \begin{itemize}
-    \item $\{v1\}$.
     \item $\{v2, v3, v4\}$.
-    \item $\{v5\}$.
     \item $\{v6, v7\}$.
     \item $\{v8, v9, v10, v11\}$.
 \end{itemize}
 
-The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\}, \{v8\}, \{v9\}, \{v10, v11\}\}$.
+The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\},$ \\ $\{v8\}, \{v9\}, \{v10, v11\}\}$.
 \end{myex}
 
 \begin{myex}[Directed Graph (2-structure)]
-    Consider a directed graph $G$ from Figure~\ref{fig:2-structure-graph-example}.
+    Consider a directed graph $G$ from Figure~\ref{fig:example-directed-graph}.
 
-    The modules of this graph are $\{2, 3\}$, $\{4, 5\}$, $\{6\}$ and $\{7, 8\}$
+    The non-trivial modules of this graph are $\{2, 3\}$, $\{4, 5\}$ and $\{7, 8\}$
 
     The maximal modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6\}, \{7, 8\}\}$.
 \end{myex}
@@ -313,30 +306,32 @@ The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \
 
 \section{Modular Decomposition Tree}\label{sec:modular-decomposition-tree}
 
-The modular decomposition tree represents the hierarchical structure of modules within a graph.
-Each node in the tree corresponds to a module, and the leaves are the individual vertices of the graph.
-The root node represents the entire graph.
+A modular decomposition tree is a tree structure that represents the hierarchical modular decomposition of a graph.
 
-\subsection*{Construction of the Tree}\label{subsec:construction-of-the-tree}
-
-The modular decomposition tree is constructed as follows:
-
+Structure of the Modular Decomposition Tree:
 \begin{itemize}
-    \item Identify the maximal modular partition of the graph.
-    \item Represent each module as a node in the tree.
-    \item Recursively apply the modular decomposition to each module, treating it as a subgraph.
-    \item Connect the nodes to reflect the hierarchical structure of the modules.
+    \item \textbf{Nodes:} Each node in the tree represents a module of the graph.
+            \begin{itemize}
+                \item \textbf{Leaf Nodes:} These correspond to individual vertices of the graph.
+                \item \textbf{Internal Nodes:} These represent a module and are labeled with one of three types:
+                        \begin{itemize}
+                            \item \textbf{Parallel Node (P-node)}: Represents a module where the directed sub-modules form a set of disjoint independent sets (no edges between vertices within the module).
+                            \item \textbf{Series Node (S-node)}: Represents a module where the directed sub-module form a clique (complete subgraph).
+                            \item \textbf{Prime Node}: Represents a module where the module cannot be decomposed further into either parallel or series modules.
+                        \end{itemize}
+            \end{itemize}
+    \item \textbf{Root:} The root node of the tree represents the entire graph.
 \end{itemize}
 
 
 \begin{Example}
-    Consider the graph $G$ from Figure~\ref{fig:example-undirected-graph} with maximal modular partition \\ $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9, v10, v11\}\}$ (Figure~\ref{fig:example-undirected-graph-module}).
+    Consider the graph $G$ from Figure~\ref{fig:example-undirected-graph} with maximal modular partition \\ $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9\}, \{v10, v11\}\}$ (Figure~\ref{fig:example-undirected-graph-module}).
     The modular decomposition tree is constructed as follows:
 
     \begin{figure}[!h]
         \centering
         \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia_modular_decomposition}
-        \caption{Example of Result of Modular Decomposition Tree}
+        \caption{Example of Modular Decomposition Tree}
         \label{fig:example-undirected-graph-modular-decomposition-tree}
     \end{figure}
 \end{Example}

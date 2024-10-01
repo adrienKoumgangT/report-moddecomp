@@ -9,9 +9,10 @@ This section delves into the details of the algorithm, its steps, and its applic
 
 \section{Modular Partition Algorithm}\label{sec:modular-partition-algorithm}
 
-In his book~\cite{SAMD}, Ehrenf gives us an algorithm for performing modular decomposition on a graph $G = (V, E)$ :
+In the book A survey of the algorithmic aspects of modular decomposition~\cite{SAMD}, the authro Ehrenf describes an algorithm for performing modular decomposition on a graph $G = (V, E)$ :
 
 \begin{algorithm}[H]
+    \label{alg:modular-partition-algorithm}
     \caption{Modular Partition}
     \KwIn{A partition $P$ of the vertex set $V$ of a graph $G$}
     \KwOut{The coarsest modular partition $Q$ smaller than $P$}
@@ -44,11 +45,11 @@ In his book~\cite{SAMD}, Ehrenf gives us an algorithm for performing modular dec
             }
         }
     }
-\end{algorithm}\label{alg:modular-partition-algorithm}
+\end{algorithm}
 
 \begin{mytheo}
     Let $P$ be a partition of the vertices of a graph $G = (V, E)$.
-    Algorithm~\ref{alg:modular-partition-algorithm} computes the coarsest modular partition for $G$ and $P$ in time $O(n + \log{n})$.
+    Algorithm~\ref{alg:modular-partition-algorithm} computes the coarsest modular partition for $G$ and $P$ in time $O(n + \log{n})$ with $n = \mid V \mid$.
 \end{mytheo}
 
 The correctness of the algorithm follow from the next three invariant properties.
@@ -76,12 +77,14 @@ This yields to a $O\left(\sum_{x \in V} \log{(\mid V \mid)}.\mid N (x) \mid\righ
 \end{mydef}
 
 The neighbourhood of a vertex $x$ in a graph $G = (V, E)$ is denoted $N_G(x)$ and its non-neighbourhood $\bar{N}_G(x)$ (subscript $G$ will be omitted when the context is clear).
-The complementary graph of a graph $G$ is denoted by $G$.
+The complement graph of a graph $G$ is denoted by $\bar{G}$.
 Given a subset of vertices $X \subset V$ , $G[X]$ is the subgraph induced by $X$ (any edge in $G$ between two vertices in $X$ belongs to $G[X]$).
 
 \begin{mylem}
-    The partition $M(G, v)$ is the coarsest modular partition for $G$ and $P = \{N(v), v, \bar{N}(v)\}$ and can be computed in time $O(n + m \log n)$.
+    The partition $M(G, v)$ is the coarsest modular partition for $G$ and $P = \{N(v), v, \bar{N}(v)\}$ and can be computed in time $O(n + m \log n)$ with $n = \mid V \mid$ and $m = \mid E \mid$.
 \end{mylem}
+
+This lemma is detailed and demonstrated in book A survey of the Algorithmic aspect of modular decomposition\cite{SAMD}.
 
 \begin{figure}[!h]
     \centering
@@ -97,7 +100,7 @@ Given a subset of vertices $X \subset V$ , $G[X]$ is the subgraph induced by $X$
     \SetKwBlock{Begin}{begin}{end}
     \Begin{
         \ForEach{leaf $X$ of $T$}{
-            Let $T_X = MD(G[X])$ and $p(X)$ be $X$'s father in $T$\;
+            Let $T_X = MD(G[X])$ and $p(X)$ be $X$'s father in $T$\; \\
             Replace $X$ by $T_X$ in $T$\;
             \If{the root $r(T_X)$ and $p(X)$ are both parallel or series}{
                 Remove $r(T_X)$ and connect the children of $r(T_X)$ to $p(X)$\;
@@ -105,6 +108,40 @@ Given a subset of vertices $X \subset V$ , $G[X]$ is the subgraph induced by $X$
         }
     }\label{alg:algorithm-Ehrenfeucht-et-al}
 \end{algorithm}
+
+
+\section{Example of application}\label{sec:example-of-application}
+
+Consider a simple graph $G$ with vertices $V = \{1, 2, 3, 4, 5\}$ and edges $E = \{\{1, 2\}, \{1, 3\}, \{2, 3\}, \{4, 5\}\}$.
+The modular decomposition using Ehrenfeucht's algorithm can be illustrated as follows:
+
+\begin{enumerate}
+    \item \textbf{Choose Pivot Vertex}:
+            \begin{itemize}
+                \item Select vertex $1$ as the pivot.
+            \end{itemize}
+    \item \textbf{Partition the Graph}:
+            \begin{itemize}
+                \item Partition $\{2, 3, 4, 5\}$ based on their adjacency to $1$:
+                        \begin{itemize}
+                            \item $2$ and $3$ are adjacent to $1$.
+                            \item $4$ and $5$ are not adjacent to $1$.
+                        \end{itemize}
+                \item Resulting modules: $\{2, 3\}$ and $\{4, 5\}$.
+            \end{itemize}
+    \item \textbf{Recursive Decomposition}:
+            \begin{itemize}
+                \item Apply the algorithm to the subgraphs induced by $\{2, 3\}$ and $\{4, 5\}$:
+                        \begin{itemize}
+                            \item Subgraph $\{2, 3\}$ is already fully connected (a prime module).
+                            \item Subgraph $\{4, 5\}$ is also fully connected (a prime module).
+                        \end{itemize}
+            \end{itemize}
+    \item \textbf{Construct Modular Decomposition Tree}:
+            \begin{itemize}
+                \item Combine the results to form the modular decomposition tree: ('COMPLETE', [('COMPLETE', [1, ('COMPLETE', [2, 3])]), ('COMPLETE', [4, 5])])
+            \end{itemize}
+\end{enumerate}
 
 
 \section{Advantages of Ehrenfeucht's Algorithm}\label{sec:advantages-of-ehrenfeucht's-algorithm}

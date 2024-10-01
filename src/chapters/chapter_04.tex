@@ -5,7 +5,7 @@
 
 \section{Implementation in SageMath}\label{sec:implementation-in-sagemath}
 
-SageMath is built out of hundreds of open-source packages and features a unified interface.
+SageMath~\cite{sagemathtour} is built out of hundreds of open-source packages and features a unified interface.
 SageMath can be used to study elementary and advanced, pure and applied mathematics.
 This includes a huge range of mathematics, including basic algebra, calculus, elementary to very advanced number theory, cryptography, numerical computation, commutative algebra, group theory, combinatorics, graph theory, exact linear algebra and much more.
 It combines various software packages and seamlessly integrates their functionality into a common experience.
@@ -29,7 +29,7 @@ Her work involves:
 Python, a high-level programming language known for its simplicity and versatility, was also used by Pistiloglou to implement the modular decomposition algorithm.
 The following are the results.
 
-Firstly, it refers to the fact that the initial version of the code defines a TwoStructure class to represent a 2-structure that uses a dictionary to store arcs, whose key is the source index and whose value is a dictionary containing the destinations associated with the colour.
+Firstly, the initial version of the code defines a TwoStructure class to represent a 2-structure that uses a dictionary to store arcs, whose key is the source index and whose value is a dictionary containing the destinations associated with the colour.
 So the call to the function that decides whether a node distinguishes two others requires access to the values of both dictionaries.
 Similarly, for the function that returns the colour of an arc.
 The theoretical complexity of a dictionary search is $O(1)$ thanks to hashing, but implementing dictionary operations in Python is very time-consuming.

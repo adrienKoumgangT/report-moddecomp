@@ -54,7 +54,7 @@
 % \usepackage{color}
 \usepackage{ragged2e}
 \usepackage{algorithmicx}
-\usepackage{algorithm}
+% \usepackage{algorithm}
 % \usepackage{algorithm2e}
 \usepackage{program}
 % \usepackage{listings-rust}
@@ -170,6 +170,7 @@
     backgroundcolor=\color{white},       % Set background color
     morekeywords={self, None, True, False}, % Additional Python-specific keywords
     % escapeinside={(*@}{@*)},             % Escape inside code
+    literate={\<}{{\textless}}1 {\>}{{\textgreater}}1, % Handle < and > symbols
 }
 
 % \lstdefinestyle{mystyle}{
@@ -228,7 +229,8 @@
     \include{chapters/chapter_02}
 
 % algorithms of Eh....
-    \include{chapters/chapter_03}
+    % \include{chapters/chapter_03}
+    \include{chapters/chapter_03_alt}
 
 % Implementation in SageMath and Python
     \include{chapters/chapter_04}
@@ -243,8 +245,9 @@
     \include{chapters/chapter_07}
 
 
-    \bibliographystyle{plain}
+    \bibliographystyle{IEEEtran}
     \bibliography{bibliography}
+    % \printbibliography
 
 
 % acknowledgement
