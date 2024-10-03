@@ -62,7 +62,7 @@ $X$ is the image in $g'$ of its inverse image.
 \begin{mytheo}
     \label{thm:2-1}
     Let $g$ be a two-structure, and let $X$ and $Y$ be overlapping modules of $g$.
-    Then $\X \cap Y$, $X \cup Y$, and $X - Y$ are modules of $g$.
+    Then $X \cap Y$, $X \cup Y$, and $X - Y$ are modules of $g$.
 \end{mytheo}
 
 \begin{mytheo}
@@ -96,7 +96,7 @@ $X$ is the image in $g'$ of its inverse image.
 
 It is clear that if $g$ is complete, its modules are all subsets of $dom(g)$, and if it is linear, then its modules are the consecutive sets (sets of the form $\{x_i, x_{i+1}, \dots, x_j\}$) in the linear order on its nodes.
 
-\begin{mytheo}[primitive, complete and linear]
+\begin{mytheo}
     \label{thm:2-5}
     .\\
     \begin{enumerate}
@@ -421,7 +421,7 @@ The proof of the $O(n^2)$ time bound for Algorithm~\ref{alg:3} is identical to t
             }
         }
         \ForEach{member $X$ of $F$}{
-            Compute $ptf(g|X)$ recursively\;
+            Compute $ptf(g \mid X)$ recursively\;
             \eIf{$u$ and the root of $ptf(g \mid X)$ are both complete and the same color or both linear and the same color}{
                 Make the children of $ptf(g \mid X)$ be children of $u$\;
             }{
