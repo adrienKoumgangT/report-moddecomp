@@ -155,6 +155,7 @@
     stringstyle=\color{red},             % Style for strings
     commentstyle=\color{gray}\itshape,   % Style for comments
     numberstyle=\tiny\color{gray},       % Style for line numbers
+    backgroundcolor=\color{backcolour},   % choose the background color
     numbers=left,                        % Show line numbers on the left
     stepnumber=1,                        % Line numbers every 1 line
     numbersep=8pt,                       % Space between line numbers and code
@@ -170,6 +171,8 @@
     backgroundcolor=\color{white},       % Set background color
     morekeywords={self, None, True, False}, % Additional Python-specific keywords
     % escapeinside={(*@}{@*)},             % Escape inside code
+    alsoother={\<},
+    alsoother={\>},
     literate={\<}{{\textless}}1 {\>}{{\textgreater}}1, % Handle < and > symbols
 }
 
@@ -245,7 +248,7 @@
     \include{chapters/chapter_07}
 
 
-    \bibliographystyle{IEEEtran}
+    \bibliographystyle{splncs03}
     \bibliography{bibliography}
     % \printbibliography
 
