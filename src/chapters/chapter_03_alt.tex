@@ -7,67 +7,66 @@ Modular decomposition is a powerful technique used to simplify and analyze the s
 One of the notable algorithms for achieving this is the algorithm developed by Ehrenfeucht et al.
 This section delves into the details of the algorithm, its steps, and its application in graph theory.
 
-\section{Introduction of Partition Tree Family}\label{sec:introduction-of-partition-tree-family}
+\section{The Prime Tree Family of a 2-Structure}\label{sec:the-prime-tree-family-of-a-2-structure}
 
-In the article ``An $O(n^2)$ Divide-and-Conquer Algorithm for the Prime Tree Decomposition of Two-Structure and Modular Decomposition of Graphs article\cite{PTDMD}", Ehrenfeucht and co work directly on two-structured graphs, and the application of their algorithms can easily be extended to other graph.
-A two-structure is the generalization that allows an arbitrary coloring of this set.
-A two-structure may thus be viewed as an edge-colored complete directed graph.
-Graphs are a special case of two-structures, so all theorems and algorithms presented in this chapter for two-structures are immediately applicable to graphs.
+In the article~\cite{PTDMD}, Ehrenfeucht and co work directly on 2-structures graphs, and the application of their algorithms can easily be extended to other graphs.
 
 
-If $g$ is a two-structure, $dom(g)$ denotes its nodes.
+If $g$ is a 2-structure, $dom(g)$ denotes its nodes.
 The substructure induced in $g$ by $X \subseteq dom(g)$, denoted $g \mid X$, is the subgraph of $g$ induced by $X$, where the edges in $g \mid X$ have the same color as they do in $g$.
-A node $x$ distinguishes nodes $y$ and $z$ if $(x, y)$ and $(x, z)$ are different colors,or $(y, x)$ and $(z, x)$ are different colors.
+A node $x$ distinguishes nodes $y$ and $z$ if $(x, y)$ and $(x, z)$ have different colors, or $(y, x)$ and $(z, x)$ have different colors.
 A module is a set $X \subseteq dom(g)$ such that no $x \in dom(g) - X$ distinguishes any two members of $X$.
-It is easily seen that if two modules are disjoint, all edges from one of the modules to the other are the same color.
+It is easily seen that if two modules are disjoint, all edges from one of the modules to the other have the same color.
 If $R$ is a partition of the nodes of $g$, a system of representatives from $R$ is a set consisting of one node from each member of $R$.
 If each member of $R$ is a module of $g$, then every system of representatives induces the same substructure.
 This substructure is denoted $g / R$, and completely specifies the colors of all edges that are not internal to a member of $R$.
 The operation may be performed recursively on each member of $R$ by partitioning it into still smaller modules.
-The result is a compact, hierarchical decomposition of the entire two-structure.
+The result is a compact, hierarchical decomposition of the entire 2-structure.
 
-The \textit{prime tree family} of a two-structure is such a hierarchical decomposition, and it is unique.
+The \textit{prime tree family} of a 2-structure is such a hierarchical decomposition, and it is unique.
 It is given by the family of \textit{prime modules} : $\{X : X$ is a nonempty module of $g$, and for any module $Y$, either $Y \subseteq X, X \subseteq Y$, or $X \cap Y = \emptyset\}$.
 If $\mid X \mid > 1$, the maximal-cardinality members of the prime tree family that are proper subsets of $\mid X \mid$, denoted $children_g(X)$, are a partition of $X$.
-Thus $(g \mid X) / children_g(X)$, given for all $X$ in the prime tree family, completely represents the original two-structure.
-As is described below, this family represents in a simple way all modules in the two-structure, not just those that are members of the family.
+Thus $(g \mid X) / children_g(X)$, given for all $X$ in the prime tree family, completely represents the original 2-structure.
+As is described below, this family represents in a simple way all modules in the 2-structure, not just those that are members of the family.
 The number of modules may be exponential in $n$, but this representation takes space that is linear in $n$.
 
-The prime tree family for the case of graphs is also known as the modular decomposition\cite{IMD}.
+The prime tree family for the case of graphs is also known as the Modular Decomposition Tree (see Section~\ref{sec:modular-decomposition-tree})\cite{IMD}.
 
 
-\section{Preliminaries}\label{sec:preliminaries}
+\section{Preliminaries to the algorithm}\label{sec:preliminaries}
+
+This section introduces some notations used in the algorithms of the next section, as well as some results that guarantee their correctness.
 
 Let $G$ be a directed graph.
 The \textit{component graph} for $G$ has one node for each strongly connected component.
 If $X$ and $Y$ are two strongly connected components of $G$, then $(X,\, Y)$ is an edge in the component graph if there exist $x \in X$ and $y \in Y$ such that $(x,\, y)$ is an edge of $G$.
 
 Let $X$ and $Y$ be finite sets.
-$X$ and $Y$ are overlapping if and only if $X - Y$, $ X \cap Y$, and $Y - X$ are all nonempty.
-A two-edge over $X$ is an ordered pair $(x,\, y)$ such that $x \neq y$ and $x, y \in X$.
+$X$ and $Y$ are \textit{overlapping} if and only if $X - Y$, $ X \cap Y$, and $Y - X$ are all nonempty.
+A \textit{two-edge over} $X$ is an ordered pair $(x,\, y)$ such that $x \neq y$ and $x, y \in X$.
 In this section, the term edge refers to a two-edge.
-The set $E_2(X)$ is the set of all possible edges over $X$, and a two-structure on domain $X$ is a coloring of $E_2(X)$.
-An edge $(x,\, y)$ is symmetric if $(y,\, x)$ is the same color.
-A two-structure is symmetric if all of its edges are symmetric.
+The set $E_2(X)$ is the set of all possible edges over $X$, and a 2-structure on domain $X$ is a coloring of $E_2(X)$.
+An edge $(x,\, y)$ is \textit{symmetric} if $(y,\, x)$ has the same color.
+A 2-structure is symmetric if all of its edges are symmetric.
 $X$ is a singleton set if $\mid X \mid = 1$.
-The nodes of a two-structure $g$ are known as its \textit{domain}, denoted $dom(g)$, and $g$ is a coloring of $E_2(dom(g))$.
+The nodes of a 2-structure $g$ are known as its \textit{domain}, denoted $dom(g)$, and $g$ is a coloring of $E_2(dom(g))$.
 Obviously, $dom(g)$, $\emptyset$, and the singleton subsets of $dom(g)$ are modules of $g$; these are the trivial modules of $g$.
 In this section, modules will be assumed to be nonempty, except when otherwise stated.
 
-Let $g$ be a two-structure, and let $R$ be a partition of $dom(g)$ such that every member of $R$ is a module of $g$.
-Let $g'$ be the two-structure $g / R$.
+Let $g$ be a 2-structure, and let $R$ be a partition of $dom(g)$ such that every member of $R$ is a module of $g$.
+Let $g'$ be the 2-structure $g / R$.
 If $X \subseteq dom(g')$, its inverse image in $g$ is the union of the members of $R$ that correspond to members of $X$.
 $X$ is the image in $g'$ of its inverse image.
 
 \begin{mytheo}
     \label{thm:2-1}
-    Let $g$ be a two-structure, and let $X$ and $Y$ be overlapping modules of $g$.
+    Let $g$ be a 2-structure, and let $X$ and $Y$ be overlapping modules of $g$.
     Then $X \cap Y$, $X \cup Y$, and $X - Y$ are modules of $g$.
 \end{mytheo}
 
 \begin{mytheo}
     \label{thm:2-2}
-    Let $g$ be a two-structure, and let $R$ be a partition of $dom(g)$ into modules.
+    Let $g$ be a 2-structure, and let $R$ be a partition of $dom(g)$ into modules.
     \begin{enumerate}
         \item If $X$ is a module in $g$ that has an image $Y$ in $g / R$, then Y is a module in $g / R$.
         Moreover, if $X$ is a prime module in $g$, then $Y$ is a prime module in $g / R$.
@@ -78,7 +77,7 @@ $X$ is the image in $g'$ of its inverse image.
 
 \begin{mylem}
     \label{lem:2-3}
-    Let $g$ be a two-structure, and let $X$ be a module of $g$.
+    Let $g$ be a 2-structure, and let $X$ be a module of $g$.
     Then the modules of $g \mid X$ are those modules of $g$ that are subsets of $X$.
     Moreover, the prime modules of $g \mid X$ that are proper subsets of $X$ are the prime modules of $g$ that are proper subsets of $X$.
 \end{mylem}
@@ -86,7 +85,7 @@ $X$ is the image in $g'$ of its inverse image.
 
 \begin{mydef}
     \label{def:2-4}
-    Let $g$ be a two-structure.
+    Let $g$ be a 2-structure.
     \begin{enumerate}
         \item $g$ is \textit{primitive} if and only if it contains at least three nodes and all modules in $g$ are trivial.
         \item $g$ is \textit{complete} if and only if all of its edges are the same color.
@@ -101,7 +100,7 @@ It is clear that if $g$ is complete, its modules are all subsets of $dom(g)$, an
     .\\
     \begin{enumerate}
         \item If $X$ is a prime module of $g$ and $\mid X \mid > 1$, $children_g(X)$ is a partition of $X$;
-        \item Each module of a two-structure $g$ is a union of siblings in the prime tree family of $g$;
+        \item Each module of a 2-structure $g$ is a union of siblings in the prime tree family of $g$;
         \item If $X$ is a prime module of $g$ such that $\mid X \mid > 1$, $X$ is of one of the following types:
             \begin{itemize}
                 \item \textbf{primitive}: no union of more that one and less than all of its children is a module of $g$;
@@ -131,21 +130,21 @@ For ease of notation, when $x$ is a node of $ptf(g)$ that represents a prime mod
 
 \section{The Algorithm}\label{sec:the-algorithm}
 
-In this section, we give an algorithm that computes $ptf(g)$ for symmetric two-structures.
-Since undirected graphs are symmetric two-structures, they are covered.
-Later, we will give the minor modification needed when the two-structure may have asymmetric edges.
-We will assume that the two-structure is given as an adjacency array, and that if the two-structure has $k$ edge colors, they are given in the adjacency array as integers from zero to $k-1$.
+In this section, we give an algorithm that computes $ptf(g)$ for symmetric 2-structures.
+Since undirected graphs are symmetric 2-structures, they are covered.
+Later, we will give the minor modification needed when the 2-structure may have asymmetric edges.
+We will assume that the 2-structure is given as an adjacency array, and that if the 2-structure has $k$ edge colors, they are given in the adjacency array as integers from zero to $k-1$.
 
 $G(g, v)$ is trivially computed in $O(n^2)$ time. $M(g, v)$ is a partition of $dom(g) - \{v\}$, and it may be computed with Algorithm~\ref{alg:compute}, variants of which have appeared repeatedly in related contexts.
-The prime tree family of an arbitrary two-structure is then computed with Algorithm~\ref{alg:ptf}.
+The prime tree family of an arbitrary 2-structure is then computed with Algorithm~\ref{alg:ptf}.
 
 
 \begin{mydef}
     \label{def:3-1}
-    Let $u$ be a node of $dom(g)$; $G(g, u)$ denotes a graph whose nodes are given by $dom(g) - (0)$.
+    Let $u$ be a node of $dom(g)$; $G(g, v)$ denotes a graph whose nodes are given by $dom(g) - \{v\}$.
     There is an edge in $G(g, v)$ from node $x$ to node $y$ if $x$ distinguishes $y$ and $v$ in $g$.
-    $M(g,u)$ denotes the family of maximal modules of $g$ that do not contain $v$.
-    That is, $X \in M(g, 0)$ iff $X$ is a module, and for every module $Y$ such that $X \subset Y$, $Y$ contains $v$.
+    $M(g,v)$ denotes the family of maximal modules of $g$ that do not contain $v$.
+    That is, $X \in M(g, v)$ iff $X$ is a module, and for every module $Y$ such that $X \subset Y$, $Y$ contains $v$.
 \end{mydef}
 
 
@@ -154,7 +153,7 @@ The prime tree family of an arbitrary two-structure is then computed with Algori
     \SetAlgoLined
     \caption{Compute M(g, v)}
     Maintain a family $L$ of partition classes, and for each partition class $S$, maintain a set $Z(S)$ of "unprocessed outsiders".\\
-    Initially, there is one partition class $S = \text{dom}(g) - \{u\}$ in $L$, with $Z(S) = \{u\}$.
+    Initially, there is one partition class $S = \text{dom}(g) - \{v\}$ in $L$, with $Z(S) = \{v\}$.
 
     \While{$L$ contains a class $S$ such that $Z(S)$ is nonempty}{
         Remove $S$ from $L$\;
@@ -171,16 +170,16 @@ The prime tree family of an arbitrary two-structure is then computed with Algori
 \begin{algorithm}[H]
     \caption{ptf(g)}
     \label{alg:ptf}
-    Select a node $u$ of $g$ and compute $M(g, u)$ using Algorithm \ref{alg:compute}\;
-    Let $g' = g / (M(g, u) \cup \{\{u\}\})$\;
-    Let $u'$ be the image of $u$ in $g'$\;
-    Let $G' = G(g', u')$\;
+    Select a node $u$ of $g$ and compute $M(g, v)$ using Algorithm \ref{alg:compute}\;
+    Let $g' = g / (M(g, v) \cup \{\{v\}\})$\;
+    Let $v'$ be the image of $v$ in $g'$\;
+    Let $G' = G(g', v')$\;
     Let $G''$ be the component graph of $G'$\;
     Create a tree node $t$\;
     $u := t$\;
     \While{$G''$ is not empty}{
         Create a tree node $w$ and make it a child of $u$\;
-        Remove a sink from $G''$; let $F$ be the corresponding members of $M(g, u)$\;
+        Remove a sink from $G''$; let $F$ be the corresponding members of $M(g, v)$\;
         \eIf{$\mid F \mid > 1$}{
             $u$ is primitive\;
         }{
@@ -202,11 +201,14 @@ The prime tree family of an arbitrary two-structure is then computed with Algori
 
 \section{Correctness and Time bound}\label{sec:correctness-and-time-bound}
 
+In this section we present some results concerning the correctness and the complexity of the algorithms presented in the previous section.
+These results and their proofs are taken from \cite{PTDMD}.
+
 \subsection{Algorithm \ref{alg:compute}}\label{subsec:algorithm-compute}
 
 \begin{mylem}
     \label{lem:lemma-4-1}
-    Let $g$ be a two-structure, and let $v \in dom(g)$.
+    Let $g$ be a 2-structure, and let $v \in dom(g)$.
     Then $M(g, v) \cup \{\{v\}\}$ is a partition of $dom(g)$.
 \end{mylem}
 
@@ -228,18 +230,18 @@ $M(g, v)$ is a partition of $dom(g) - \{v\}$, and the lemma follows.
 The algorithm clearly maintains the following invariant: For each partition class $S$, a member $x$ of $dom(g) - S$ may distinguish members of $S$ only if it is a member of the outside list for $S$.
 The algorithm terminates when every outsider list is empty, hence, when each partition class in a module.
 Conversely, if a module of $g$ does not contain $v$, it is a subset of the initial member of $L$, and its members cannot be split into different partition classes by any outsider.
-Thus, its memebers are all in the same final partition class.
+Thus, its members are all in the same final partition class.
 Since each maximal module that does not contain $v$ is a final partition class, the final partition classes must be the maximal modules that do not contain $v$, by Lemma~\ref{lem:lemma-4-1}.
 
 \begin{mydef}
     \label{def:4-3}
-    Let $g$ be a two-structure, and let $R$ be a partition of $dom(g)$.
+    Let $g$ be a 2-structure, and let $R$ be a partition of $dom(g)$.
     The edges that are exposed by $R$ are the set $\{(u, v): u, v \in dom(g)$ and $u$ and $v$ are not in the same partition class of $R\}$
 \end{mydef}
 
 \begin{mylem}
     \label{lem:4-4}
-    Let $g$ be a two-structure, let $v \in dom(g)$, and let $k$ be the number of edges exposed by $M(g, v) \cup \{\{v\}\}$.
+    Let $g$ be a 2-structure, let $v \in dom(g)$, and let $k$ be the number of edges exposed by $M(g, v) \cup \{\{v\}\}$.
     The number of operations required by Algorithm~\ref{alg:compute} is $O(k)$.
 \end{mylem}
 
@@ -259,7 +261,7 @@ Thus, the costs of performing all partitions and maintaining all lists is $O(k)$
 
 \begin{mylem}
     \label{lem:5-1}
-    Let $g$ be a two-structure, and let $v \in dom(g)$, where $\mid dom(g) \mid > 1$.
+    Let $g$ be a 2-structure, and let $v \in dom(g)$, where $\mid dom(g) \mid > 1$.
     Let $U \neq \{v\}$ be a proper ancestor of $\{v\}$ in $ptf(g)$, and let $W$ be $U$'s child that contains $v$:
     \begin{enumerate}
         \item If $(g \mid U) / children_g(U)$ is primitive, each of $U$'s children, other than $W$, is a member of $M(g, v)$.
@@ -290,7 +292,7 @@ of the ancestors of $(v)$ in the prime tree family of $g$.
 
 \begin{mylem}
     \label{lem:5-3}
-    Let $g$ be a two-structure, and let $X$ be the set of nodes reachable from node $x$ in $G(g, v)$.
+    Let $g$ be a 2-structure, and let $X$ be the set of nodes reachable from node $x$ in $G(g, v)$.
     The set $dom(g) - X$ is the largest module of $g$ that contains $u$ and excludes $x$.
 \end{mylem}
 
@@ -310,14 +312,14 @@ Thus, $dom(g) - X$ is a module.
 
 \begin{mypro}
     \label{prop:5-4}
-    Let $g$ be a two-structure, let $v \in dom(g)$, and let $X \subseteq dom(g) - \{v\}$.
+    Let $g$ be a 2-structure, let $v \in dom(g)$, and let $X \subseteq dom(g) - \{v\}$.
     Let $g' = g \mid (dom(g) - X)$.
     Then $G(g', v)$ is the sub-graph induced in $G(g, v)$ by $dom(g) - (X \cup \{v\})$.
 \end{mypro}
 
 \begin{mytheo}
     \label{thm:5-5}
-    Let $g$ be a two-structure, and let $W$ be a child of $U$ in $ptf(g)$.
+    Let $g$ be a 2-structure, and let $W$ be a child of $U$ in $ptf(g)$.
     If $U$ and $W$ are both complete, the color of the edges connecting children of $W$ is different from the color of the edges connecting children of $U$.
     If $U$ and $W$ are both linear, the pair of colors of edges connecting children of $W$ is different from the pair of colors connecting children of $U$.
 \end{mytheo}
@@ -335,13 +337,13 @@ By the inductive hypothesis, the recursive call produces the correct tree for $g
 By Proposition~\ref{prop:5-4} and Lemma~\ref{lem:2-3}, subsequent iterations of the main loop of Algorithm~\ref{alg:compute} are computationally equivalent to a recursive call to Algorithm~\ref{alg:compute} on $g \mid W$.
 By the inductive hypothesis, they produce the subtree of $ptf(g)$ rooted at $W$.
 Thus, Algorithm~\ref{alg:compute} produces the correct result when $\mid dom(g) \mid \leq k$.
-Inductively, it produces the correct result for all symmetric two-structures.
+Inductively, it produces the correct result for all symmetric 2-structures.
 
 For the time bound, let $k$ be the number of edges exposed by $M(g, v) \cup \{\{v\}\}$.
-If the two-structure has only one node, we may charge the cost of returning the trivial decomposition to the node.
-Otherwise, by Lemma~\ref{lem:4-4}, computing$ M(g, v)$ requires $O(k)$ time, so we may charge this cost to the exposed edges.
+If the 2-structure has only one node, we may charge the cost of returning the trivial decomposition to the node.
+Otherwise, by Lemma~\ref{lem:4-4}, computing $M(g, v)$ requires $O(k)$ time, so we may charge this cost to the exposed edges.
 Let $g' = g/(M(g, v) \cup \{\{v\}\})$.
-The number of nodes of g' is $O(k^{1/2})$.
+The number of nodes of $g'$ is $O(k^{1/2})$.
 Computing $G(g',v')$ and the component graph of $G(g', v')$ takes $O(k)$ time, as does the cost of identifying and removing sinks from the component graph.
 These costs may be charged to the exposed edges at constant cost per edge.
 In recursive calls, we use the same charging scheme on edges exposed in those calls.
@@ -350,16 +352,16 @@ It follows that all costs are charged to the edges at constant time per edge, gi
 
 
 
-\section{The generalization of Algorithm \ref{alg:ptf} for arbitrary Two-Structure}\label{sec:the-generalization-of-algorithmref{alg:ptf}-for-arbitrary-two-structure}
+\section{The generalization of Algorithm \ref{alg:ptf} for arbitrary Two-Structures}\label{sec:the-generalization-of-algorithmref{alg:ptf}-for-arbitrary-2-structures}
 
-Algorithm~\ref{alg:3} gives the generalization of Algorithm~\ref{alg:ptf} for arbitrary two-structures.
-For the correctness, note that when asymmetric edges are allowed, case 3 of Lemma\ref{lem:5-1} can no longer be excluded.
+Algorithm~\ref{alg:3} gives the generalization of Algorithm~\ref{alg:ptf} for arbitrary 2-structures.
+For the correctness, note that when asymmetric edges are allowed, case 3 of Lemma~\ref{lem:5-1} can no longer be excluded.
 Because of this, Theorem~\ref{thm:5-2} is no longer true.
 Instead, we make use of the following.
 
 \begin{mylem}
     \label{lem:6-1}
-    Let $g$ be a two-structure, let $v$ be a node of $g$, and let $W$ be the child of $dom(g)$ that contains $v$.
+    Let $g$ be a 2-structure, let $v$ be a node of $g$, and let $W$ be the child of $dom(g)$ that contains $v$.
     Let $g' = g / (M(g, v) \cup \{\{v\}\})$, let $v'$ be the image of $v$ in $g'$, and let $W'$ be the image of $W$.
     Let $G''$ be the component graph of $G(g', v')$, and let $X'$ be the nodes of $g'$ that correspond to the sinks of $G''$.
     Then $W' = dom(g') - X'$.
@@ -393,7 +395,7 @@ By the inductive hypothesis, the recursive call produces the correct tree for $g
 By Proposition~\ref{prop:5-4} and Lemma~\ref{lem:2-3}, subsequent iterations of the main loop of Algorithm~\ref{alg:3} are computationally equivalent to a recursive call to Algorithm~\ref{alg:3} on $g \ mid W$.
 By the inductive hypothesis, they produce the subtree of $ptf(g)$ rooted at $W$.
 Thus, Algorithm~\ref{alg:3} produces the correct result when $\mid dom(g) \mid \leq k$.
-Inductively, it produces the correct result for all two-structures.
+Inductively, it produces the correct result for all 2-structures.
 
 The proof of the $O(n^2)$ time bound for Algorithm~\ref{alg:3} is identical to the one for Algorithm~\ref{alg:ptf}.
 
@@ -403,7 +405,7 @@ The proof of the $O(n^2)$ time bound for Algorithm~\ref{alg:3} is identical to t
     Select an arbitrary node $v$ of $g$ and compute $M(g, v)$\;
     Let $g' = g / (M(g, v) \cup \{\{v\}\})$\;
     Let $(v')$ be the image of $\{v\}$ in $g'$\;
-    Let $G' = G(g', u')$\;
+    Let $G' = G(g', v')$\;
     Let $G''$ be the component graph of $G'$\;
     Create a tree node $t$\;
     Let $u := t$\;

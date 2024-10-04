@@ -31,10 +31,8 @@ The edges simply connect two vertices and do not have a direction associated wit
 An undirected graph is a graph $G = (V, E)$ where $E \subseteq P_2(V)$, i.e., $E$ is a set of subsets of nodes of cardinality 2.
 Therefore, each edge $\{u, v\}$ is an unordered pair of vertices.
 
-In undirected graphs, the edge $\{u, v\}$ is identical to the edge $\{v, u\}$, implying that the connection is bidirectional.
-
 \begin{myex}[An undirected graph~\cite{mdwikipedia}]
-    An undirected graph $G$ with vertices $V = \{v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11\}$ and edges \\
+    Figure~\ref{fig:example-undirected-graph} presents an undirected graph $G$ with vertices $V = \{v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11\}$ and edges \\
     $E= \{\{v1, v2\}, \{v1, v3\}, \{v1, v4\}\}$
     $\cup \; \{\{v2, v4\}, \{v2, v5\}, \{v2, v6\}, \{v2, v7\}\}$ \\
     $\cup \; \{\{v3, v4\}, \{v3, v5\}, \{v3, v6\}, \{v3, v7\}\}$
@@ -62,10 +60,8 @@ A directed graph, or digraph, is a type of graph in which the edges have a direc
 A directed graph is a graph $G = (V, E)$ where $E \subseteq V \times V$, i.e., $E$ is a binary relation on $V$.
 Therefore, each edge $(v, w)$ is an ordered pair of vertices.
 
-In directed graphs, the edge $(u, v)$ is not identical to the edge $(v, u)$, implying that the connection is unidirectional.
-
 \begin{myex}[A directed graph]
-    A directed graph $G$ with vertices $V = \{1, 2, 3, 4, 5, 6, 7, 8\}$ and edges \\
+    Figure~\ref{fig:example-directed-graph} presents a directed graph $G$ with vertices $V = \{1, 2, 3, 4, 5, 6, 7, 8\}$ and edges \\
     $E = \{(1, 2), (1, 3)\}$
     $\cup \; \{(2, 3)\}$
     $\cup \; \{(4 , 1), (4, 2), (4, 3), (4, 6)\}$
@@ -82,8 +78,8 @@ In directed graphs, the edge $(u, v)$ is not identical to the edge $(v, u)$, imp
     \end{figure}
 \end{myex}
 
-Directed graphs are used where relationships have a direction, such as web page links (where one page links to another) or task scheduling (where one task must precede another).
 
+Directed graphs are used where relationships have a direction, such as web page links (where one page links to another) or task scheduling (where one task must precede another).
 
 \section{Definition of Modular Decomposition}\label{sec:definition-of-modular-decomposition}
 
@@ -104,10 +100,9 @@ Components are sometimes called \textbf{connected components}.
     \label{fig:example-modules}
 \end{figure}
 
-A connected component has the property that it is a set $M$ of vertices such that every member of $M$ is a non-neighbor of every not vertex in $M$.
+A connected component has the property that it is a set $M$ of vertices such that every member of $M$ is not a neighbor of every vertex not in $M$.
 (It is a union of connected components if and only if it has this property.)
 More generally, $M$ is a module if, for each vertex $m \notin M$, either every member of $M$ is a non-neighbor of $m$ or every member of $M$ is a neighbor of $m$.
-
 Equivalently, $M$ is a module if all members of $M$ have the same set of neighbors among vertices not in $M$.
 
 Another definition of components involves the equivalence classes of an equivalence relation defined on the graph's vertices.
@@ -128,15 +123,6 @@ Reachability is an equivalence relation, since:
 This definition ensures that within a module, the vertices are indistinguishable based on their connections to the rest of the graph.
 Modules can vary in size and structure, from single vertices to large subgraphs encompassing a significant portion of the original graph.
 
-Contrary to the connected components, the modules of a graph are the same as the modules of its complement, and modules can be nested: one module can be a proper subset of another.
-Note that the set $V$ of vertices of a graph is a module, as are its one-element subsets and the empty set; these are called the \textbf{trivial modules}.
-A graph may or may not have other modules.
-A graph is called \textbf{prime} if all of its modules are trivial.
-
-\begin{mydef}[Prime module]
-    A prime module is a module where the subgraph induced by the vertices of the module does not admit any non-trivial decomposition into smaller modules.
-\end{mydef}
-
 In the mathematical field of graph theory, the complement~\cite{complementgraphwikipedia} or inverse of a graph $G$ is a graph $H$ on the same vertices such that two distinct vertices of $H$ are adjacent if and only if they are not adjacent in $G$.
 That is, to generate the complement of a graph, one fills in all the missing edges required to form a complete graph, and removes all the edges that were previously there.
 The complement is not the set complement of the graph; only the edges are complemented.
@@ -148,11 +134,20 @@ The complement is not the set complement of the graph; only the edges are comple
     \label{fig:the}
 \end{figure}
 
+Contrary to the connected components, the modules of a graph are the same as the modules of its complement, and modules can be nested: one module can be a proper subset of another.
+Note that the set $V$ of vertices of a graph is a module, as are its one-element subsets and the empty set; these are called the \textbf{trivial modules}.
+A graph may or may not have other modules.
+A graph is called \textbf{prime} if all of its modules are trivial.
+
+\begin{mydef}[Prime module]
+    A prime module is a module where the subgraph induced by the vertices of the module does not admit any non-trivial decomposition into smaller modules.
+\end{mydef}
+
 
 \subsection*{Modular Partition}\label{subsec:modular-partition}
 
 In graph theory, partitioning a graph into meaningful substructures is a common strategy for simplifying complex problems.
-A modular partition specifically refers to dividing the vertices of a graph into disjoint subsets, known as modules, where each subset satisfies certain uniformity conditions relative to the rest of the graph.
+A modular partition specifically refers to dividing the vertices of a graph into disjoint modules.
 This concept is crucial for understanding the deeper hierarchical structure of graphs and forms the foundation for various graph decomposition techniques.
 
 \begin{mydef}
@@ -172,6 +167,15 @@ Modular partitions possess several important properties that make them useful fo
     By recursively partitioning modules into smaller modules, one can build a modular decomposition tree that captures the multi-level structure of the graph.
 \end{enumerate}
 
+% \subsubsection*{Maximal Modular Partition}\label{subsubsec:maximal-modular-partition}
+
+The maximal modular partition of a graph is unique and consists of the largest possible prime modules.
+Prime modules are those that cannot be further decomposed into smaller non-trivial modules.
+
+\begin{mydef}[Maximal modular partition]
+    A maximal modular partition is a partition of a graph into modules, where the modules are maximal in the sense that they cannot be further partitioned into smaller modules.
+\end{mydef}
+
 To illustrate the concept of modular partitions, consider the following examples:
 
 \begin{myex}[Simple Undirected Graph]
@@ -179,13 +183,6 @@ To illustrate the concept of modular partitions, consider the following examples
 
     In this graph, the sets $\{v2, v3, v4\}$ and $\{v6, v7\}$ each form modules.
     The non trivial modules are: $\{v2, v3\}, \{v2, v3, v4\}, \{v6, v7\}, \{v10, v11\}, \{v8, v9, v10, v11\}$.
-
-    \begin{figure}[!h]
-        \centering
-        \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia_module}
-        \caption{Example of Module for Simple Undirected Graph}
-        \label{fig:example-undirected-graph-module}
-    \end{figure}
 
     Possible modular partition are:
     \begin{itemize}
@@ -198,24 +195,16 @@ To illustrate the concept of modular partitions, consider the following examples
 \begin{myex}[Directed Graph]
     Consider a directed graph $G$ from Figure~\ref{fig:example-directed-graph}.
 
-    In this graph, the sets $\{2, 3\}$, $\{4, 5\}$, and $\{6, 7, 8\}$ each form modules.
-    Thus, a possible modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6, 7, 8\}\}$.
+    In this graph, the sets $\{2, 3\}$, $\{4, 5\}$, and $\{7, 8\}$ each form modules.
+    Thus, a possible modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6\}, \{7, 8\}\}$.
 \end{myex}
 
-\subsection*{Maximal Modular Partition}\label{subsec:maximal-modular-partition}
 
-The maximal modular partition of a graph is unique and consists of the largest possible prime modules.
-Prime modules are those that cannot be further decomposed into smaller non-trivial modules.
-
-\begin{mydef}
-(Maximal modular partition)
-    A maximal modular partition is a partition of a graph into modules, where the modules are maximal in the sense that they cannot be further partitioned into smaller modules.
-\end{mydef}
 
 
 \section{Application to 2-Structures}\label{sec:application-to-2-structures}
 
-Modular decomposition extends naturally to 2-structures, which are complete directed graphs with arcs colored from a set of $k$ colors.
+Modular decomposition extends naturally to 2-structures, which are directed graphs with arcs colored from a set of $k$ colors.
 The additional complexity of orientation and coloring requires modified definitions and algorithms for modular decomposition.
 
 A 2-structure is a generalization of a graph where edges (or arcs) between vertices are assigned different colors or types, capturing more complex relationships between vertices.
@@ -225,17 +214,17 @@ This concept is particularly useful in scenarios where the simple binary relatio
     A 2-structure $G$ is defined as a pair $G = (V, A)$, where
     \begin{itemize}
         \item $V$ is a finite set of vertices.
-        \item $A$ is a set of arcs, where each arc is a triple $(u, v, c)$ consisting of an ordered pair of vertices $u$ and $v$, and a color or type $c$.
+        \item $A$ is a set of arcs, where each arc is a triple $(u, v, c)$ consisting of an ordered pair of vertices $u$ and $v$, and a color or type $c$, such that for each distinct ordered pair $(u, v)$, there is exactly one corresponding color $c$.
     \end{itemize}
 \end{mydef}
 
 In a 2-structure, the arc $(u, v, c)$ indicates a directed relationship from vertex $u$ to vertex $v$ with a specific color or type $c$.
+The set of colors from which $c$ can be taken is left implicit: Typically it is a set $\{1, 2, \ldots k\}$ for some $k$.
 
 Here are the properties of the 2-structures:
 
 \begin{enumerate}
     \item \textbf{Directed and Colored Arcs:} Unlike standard graphs where edges are typically uncolored, 2-structures have arcs that are both directed and colored.
-    This allows for a richer representation of relationships.
     \item \textbf{Complex Relationships:} The use of colors or types for arcs allows 2-structures to model complex relationships between vertices, where the nature of the relationship is significant.
     \item \textbf{Generalization:} 2-structures generalize both undirected and directed graphs.
     An undirected graph can be seen as a 2-structure where each edge is represented by two directed arcs of the same color (one in each direction).
@@ -247,8 +236,8 @@ Here are the properties of the 2-structures:
 
     \begin{figure}[!h]
         \centering
-        \includegraphics[width=0.40\textwidth]{images/graphs/2_structure_graph_example}
-        \caption{Example of 2 Structure Graph}
+        \includegraphics[width=0.80\textwidth]{images/graphs/2_structure_graph_example}
+        \caption{Example of 2-structure graph}
         \label{fig:2-structure-graph-example-simple}
     \end{figure}
 
@@ -265,43 +254,12 @@ Here are the properties of the 2-structures:
     \end{itemize}
 \end{myex}
 
-Another example of 2-structure from directed graph is Figure~\ref{fig:example-directed-graph}.
-
 
 The definition of modules in 2-structures incorporates both the direction and color of arcs.
 
 \begin{mydef}
     A module $M$ in a 2-structure $G$ is a subset of vertices such that for any $u, v \in M$ and any $w \in V - M$, the arcs $(w, u, c)$ and $(w, v, c)$ have the same color and direction, and the arcs $(u, w, c)$ and $(v, w, c)$ have the same color and direction.
 \end{mydef}
-
-
-\section{Examples of Modular Decomposition}\label{sec:examples-of-modular-decomposition}
-
-To illustrate the concept of modular decomposition, consider the following examples.
-
-% \subsection*{Example 1: Simple Undirected Graph}\label{subsec:example-1:-simple-undirected-graph}
-
-\begin{myex}[Simple Undirected Graph]
-    \label{ex:simple-undirected-graph}
-
-Consider an undirected graph $G$ from Figure~\ref{fig:example-undirected-graph} and Figure~\ref{fig:example-undirected-graph-module}, the non-trivial modules of this graph are:
-
-\begin{itemize}
-    \item $\{v2, v3, v4\}$.
-    \item $\{v6, v7\}$.
-    \item $\{v8, v9, v10, v11\}$.
-\end{itemize}
-
-The maximal modular partition of $G$ is $\{\{v1\}, \{v2, v3\}, \{v4\}, \{v5\}, \{v6, v7\},$ \\ $\{v8\}, \{v9\}, \{v10, v11\}\}$.
-\end{myex}
-
-\begin{myex}[Directed Graph (2-structure)]
-    Consider a directed graph $G$ from Figure~\ref{fig:example-directed-graph}.
-
-    The non-trivial modules of this graph are $\{2, 3\}$, $\{4, 5\}$ and $\{7, 8\}$
-
-    The maximal modular partition of $G$ is $\{\{1\}, \{2, 3\}, \{4, 5\}, \{6\}, \{7, 8\}\}$.
-\end{myex}
 
 
 \section{Modular Decomposition Tree}\label{sec:modular-decomposition-tree}
@@ -325,8 +283,8 @@ Structure of the Modular Decomposition Tree:
 
 
 \begin{myex}
-    Consider the graph $G$ from Figure~\ref{fig:example-undirected-graph} with maximal modular partition \\ $\{\{v1\}, \{v2, v3, v4\}, \{v5\}, \{v6, v7\}, \{v8, v9\}, \{v10, v11\}\}$ (Figure~\ref{fig:example-undirected-graph-module}).
-    The modular decomposition tree is constructed as follows:
+    Consider the graph $G$ from Figure~\ref{fig:example-undirected-graph}.
+    Its Modular Decomposition Tree is presented in Figures \ref{fig:example-undirected-graph-modular-decomposition-tree} and \ref{fig:example-undirected-graph-module}, using different but equivalent graphical representations.
 
     \begin{figure}[!h]
         \centering
@@ -335,6 +293,13 @@ Structure of the Modular Decomposition Tree:
         \label{fig:example-undirected-graph-modular-decomposition-tree}
     \end{figure}
 \end{myex}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.40\textwidth]{images/graphs/undirected_graph_wikipedia_module}
+    \caption{Example of Modular Decomposition Tree for Simple Undirected Graph (Figure \ref{fig:example-undirected-graph})}
+    \label{fig:example-undirected-graph-module}
+\end{figure}
 
 
 \section{Applications of Modular Decomposition}\label{sec:applications-of-modular-decomposition}

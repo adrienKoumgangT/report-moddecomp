@@ -4,7 +4,7 @@
 
 \chapter{Implementation in Rust and C++}\label{ch:implementation-in-rust-and-cpp}
 
-The implementation of the modular decomposition algorithm in Rust was motivated by the need to overcome performance limitations observed in previous implementation in Python.
+The implementation of the modular decomposition algorithm in Rust was motivated by the need to overcome performance limitations observed in previous implementation in Python by Pistiloglou’s.
 The primary motivation for implementing the modular decomposition algorithm in Rust was to achieve better performance and scalability for large and complex graphs.
 As described on the official Rust website, we have that Rust is blazingly fast and memory-efficient: with no runtime or garbage collector, it can power performance-critical services, run on embedded devices, and easily integrate with other languages.
 Rust's rich type system and ownership model guarantee memory-safety and thread-safety -- enabling you to eliminate many classes of bugs at compile-time.
@@ -50,7 +50,7 @@ As a result, I quickly ran into difficulties writing the code in Rust.
 To overcome this, I turned to a programming language that has strongly influenced Rust: C++~\cite{cpp}.
 
 This chapter provides an in-depth discussion of the methodologies, challenges and results associated with the implementation in Rust and the reasons why I decided to implement the algorithm also in C++.
-
+The correctness of the implementation in Rust was partially verified by comparing the result of the execution in the case of some small graphs with the result of other implementations such as that of Pistiloglou.
 
 \section{Implementation in Rust: Graph Representation, Algorithm Design and Optimization Techniques}\label{sec:implementation-in-rust:-graph-representation-algorithm-design-and-optimization-techniques}
 
@@ -593,7 +593,7 @@ and return a `TreeNode' representing the hierarchical structure of the modular d
 \hspace{4cm}
 
 
-The code of all methods and functions defined in this stay in my GitHub repository~\cite{rustcode};
+The code of all methods and functions defined in this section are available in my GitHub repository~\cite{rustcode};
 
 
 \section{Implementation in C++}\label{sec:implementation-in-c++}

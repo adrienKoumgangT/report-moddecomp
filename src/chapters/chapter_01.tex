@@ -12,7 +12,7 @@ This decomposition is pivotal for solving numerous combinatorial optimization pr
 
 This thesis aims to delve into the modular decomposition of graphs, focusing on its theoretical foundations, algorithmic implementations, and practical performance evaluations.
 By building upon the work of Eleni Pistiloglou, who explored the modular decomposition of 2-structures, this research seeks to extend her findings and improve upon them through the implementation of the modular decomposition algorithm in Rust, a programming language known for its performance and safety features.
-
+Part of the thesis project was carried out during an Erasmus mobility period at the University Pierre et Marie Curie in Paris, under the supervision of Prof. Genitrini and Prof. Peschanshi.
 
 \section{Objectives}\label{sec:objectives}
 
@@ -22,7 +22,7 @@ The main objectives of this thesis are as follows:
     \item \textbf{Understanding Modular Decomposition:} To comprehensively understand the concept of modular decomposition, its definitions, properties, and applications in graph theory and beyond.
     \item \textbf{Extending Previous Work:} To build upon Eleni Pistiloglou's work on 2-structures, enhancing the understanding of modular decomposition in this context.
     \item \textbf{Algorithm Implementation:} To implement the modular decomposition algorithm in Rust and in C++.
-    \item \textbf{Performance Comparison:} To rigorously evaluate and compare the performance of the Rust implementation against Python and SageMath, particularly focusing on execution time and scalability with different graph sizes.
+    \item \textbf{Performance Comparison:} To rigorously evaluate and compare the performance of the Rust implementation against the Python implementation by Pistiloglou's and the open source, widely used implementation provided by the SageMath library, particularly focusing on execution time and scalability with different graph sizes.
 \end{itemize}
 
 
@@ -32,10 +32,10 @@ This thesis is structured to guide the reader through the comprehensive study an
 The chapters are organized as follows:
 
 \begin{itemize}
-    \item \textbf{Chapter \ref{ch:modular-decomposition}: Modular Decomposition}: This chapter delves into the theoretical aspects of modular decomposition, defining key concepts such as modules, maximal modular partitions, and the application of these concepts to oriented graphs and 2-structures.
-    \item \textbf{Chapter \ref{ch:algorithm-of-modular-decomposition}: Algorithm of modular decomposition}: This chapter presents the modular decomposition algorithm, detailing its steps, pseudocode, and a comprehensive example to illustrate the algorithm's application.
-    \item \textbf{Chapter \ref{ch:previous-work-implementation-in-sagemath-and-python}: Previous Work: Implementation in SageMath and Python}: This chapter presents the work previously done, including the SageMath and Python implementations, with a particular focus on the Python version and its performance against SageMath.
-    \item \textbf{Chapter \ref{ch:implementation-in-rust-and-cpp}: Implementation in Rust and C++}: This chapter discusses the implementation process in C++ and Rust, highlighting the transition from C++ to Rust and comparing the Rust implementation with the existing Python version.
+    \item \textbf{Chapter \ref{ch:modular-decomposition}: Modular Decomposition}: This chapter delves into the theoretical aspects of modular decomposition, defining key concepts such as modules, maximal modular partitions, and the application of these concepts to directed graphs and 2-structures.
+    \item \textbf{Chapter \ref{ch:algorithm-of-modular-decomposition}: Algorithm of modular decomposition}: This chapter presents the modular decomposition algorithm, detailing its steps, pseudocode, and its time complexity.
+    \item \textbf{Chapter \ref{ch:previous-work-implementation-in-sagemath-and-python}: Previous Work: Implementation in SageMath and Python by Pistiloglou’s}: This chapter presents the work previously done, including the SageMath and Pistiloglou’s implementations, with a particular focus on the Pistiloglou’s version and its performance against SageMath.
+    \item \textbf{Chapter \ref{ch:implementation-in-rust-and-cpp}: Implementation in Rust and C++}: This chapter discusses the implementation process in C++ and Rust, highlighting the transition from C++ to Rust and comparing the Rust implementation with the existing Pistiloglou’s version.
     \item \textbf{Chapter \ref{ch:benchmarking}: Benchmarking}: This chapter outlines the methodology used for performance testing, presents the results, and provides an in-depth analysis of the performance of the different implementations.
 \end{itemize}
 

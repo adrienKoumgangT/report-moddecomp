@@ -1,7 +1,7 @@
 %! Author = adrien koumgang tegantchouang
 %! Date = 09/07/24
 
-\chapter{Previous Work: Implementation in SageMath and Python}\label{ch:previous-work-implementation-in-sagemath-and-python}
+\chapter{Previous Work: Implementation in SageMath and Python by Pistiloglou’s}\label{ch:previous-work-implementation-in-sagemath-and-python}
 
 \section{Implementation in SageMath}\label{sec:implementation-in-sagemath}
 
@@ -14,9 +14,9 @@ It is well-suited for education and research.
 
 \section{Overview of Eleni Pistiloglou's Project and implementation in Python}\label{sec:overview-of-eleni-pistiloglou's-project-and-implementation-in-python}
 
-Eleni Pistiloglou, in her ``Rapport de projet''\cite{DM2S} for the Master 1 Informatique, parcours STL, has made significant contributions to modular decomposition implementation by implementing modular decomposition algorithms in Python.
+Eleni Pistiloglou, in her ``Rapport de projet''\cite{DM2S} for the Master 1 Informatique, parcours STL, in 2021, has made significant contributions to modular decomposition implementation by implementing modular decomposition algorithms in Python.
 Its implementation follows that of SageMath and its role is to improve the performance of the SageMath implementation.
-This section provides an overview of her work, highlighting the methodologies and results of her implementations, which later served as a foundation for my work in converting the Python implementation to Rust.
+This section provides an overview of her work, highlighting the methodologies and results of her implementations, which later served as a foundation for my work in converting the Pistiloglou’s Python implementation to Rust.
 
 Eleni Pistiloglou's project focuses on the modular decomposition of 2-structures, specifically directed graphs with colored arcs.
 Her work involves:
@@ -45,7 +45,7 @@ She made other significant improvements to almost 50\% of the initial functions 
 As a result, when tested on randomly structured graphs with 1000 nodes and 100 arcs, the total execution time for decomposing a directed graph was reduced to 0.152s in the second version, compared with 5.448s before the improvements.
 Performance was also compared with SageMath on undirected graphs.
 However, SageMath performed significantly better, with a latency twice as high as SageMath on graphs with 100 arcs.
-For much larger graphs, such as 1000 arcs, we obtain an execution time of around 5 minutes with Python and 0.7 seconds with SageMath.
+For much larger graphs, such as 1000 arcs, we obtain an execution time of around 5 minutes with Pistiloglou implementation and 0.7 seconds with SageMath.
 All these results can be found in her report.
 
 

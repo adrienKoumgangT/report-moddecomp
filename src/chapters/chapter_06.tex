@@ -6,10 +6,13 @@
 
 The performance tests will be carried out on three implementations: SageMath's, Pistiloglou's and my own.
 To do this, I have chosen an approach that consists of calculating the time needed to perform the modular decomposition of a graph over two groups of graphs.
-The first group is made up of so-called small graphs, where the number of nodes is of the order of ten.
+The first group is made up of small graphs, where the number of nodes is of the order of ten.
 These are mainly the graphs discussed in the theory in Chapter~\ref{ch:modular-decomposition}.
 The second group is made up of large, undirected, randomly generated graphs.
 For this group, the number of nodes is on the order of multiples of hundreds.
+
+Implementation in C++ still presenting bugs, benchmarking this will not be done.
+Fixing these bugs and benchmarking the C++ implementation is subject to future work.
 
 \section{Development and test environment}\label{sec:development-and-test-environment}
 
@@ -32,7 +35,7 @@ Key features of RustRover that support this project:
 
 \subsection{Test environment and benchmarking}\label{subsec:test-environment-and-benchmarking}
 
-The graphs on which the tests were carried out were generated at random using the following Python code and saved in .dot files which are then read by each implementation.
+The graphs on which the tests were carried out were generated randomly using the following Python code and saved in .dot files which are then read by each implementation.
 
 \begin{lstlisting}[language=Python, style=python, caption={Graph generation code}, label={lst:graph-generation-code}, firstnumber=1]
     import random
@@ -201,6 +204,12 @@ To replicate the style of results we get from Criterion in Rust and pytest-bench
 \end{lstlisting}
 
 
+SageMath primarily uses Python as its programming language.
+Most of the commands and functions in SageMath are written in Python, and SageMath code can be written in a Pythonic style.
+For this reason, I wrote the benchmark code for the SageMath implementation in Python.
+The tests were carried out on a Jupyter Notebook \cite{jupyternotebook}.
+
+
 \section{Result for small graphs}\label{sec:result-for-small-graphs}
 
 Let's start with the first test on the graph in Figure\ref{fig:example-undirected-graph} and in Figure\ref{fig:example-directed-graph}.
@@ -208,73 +217,73 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \newpage
 
-\subsection{Benchmark for simple undirected graph\ref{fig:example-undirected-graph}}\label{subsec:benchmark-for-simple-undirected-graph}
+\subsection{Benchmark for simple undirected graph \ref{fig:example-undirected-graph}}\label{subsec:benchmark-for-simple-undirected-graph}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-wikipedia-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_python}
+    \includegraphics[width=1.10\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-wikipedia-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_rust}
+    \includegraphics[width=0.65\textwidth]{images/benchmark/graph_wikipedia/benchmark_graph_wikipedia_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-wikipedia-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_wikipedia/benchmark_comparison_graph_wikipedia}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.65\textwidth]{images/benchmark/graph_wikipedia/benchmark_comparison_graph_wikipedia}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-wikipedia}
 \end{figure}
 
 \newpage
 
-\subsection{Benchmark for simple directed graph\ref{fig:example-directed-graph}}\label{subsec:benchmark-for-simple-directed-graph}
+\subsection{Benchmark for simple directed graph \ref{fig:example-directed-graph}}\label{subsec:benchmark-for-simple-directed-graph}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/digraph/benchmark_digraph_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/digraph/benchmark_digraph_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-digraph-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/digraph/benchmark_digraph_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/digraph/benchmark_digraph_python}
     \caption{Result benchmark Python implementation}
     \label{fig:benchmark-digraph-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/digraph/benchmark_digraph_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/digraph/benchmark_digraph_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-digraph-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/digraph/benchmark_comparison_digraph}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/digraph/benchmark_comparison_digraph}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-digraph}
 \end{figure}
 
@@ -286,35 +295,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{100 nodes and 1058 edges}\label{subsec:result-for-graphs-100-1058}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/large_graph/benchmark_large_graph_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/large_graph/benchmark_large_graph_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-large-graph-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.50\textwidth]{images/benchmark/large_graph/benchmark_large_graph_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/large_graph/benchmark_large_graph_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-large-graph-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/large_graph/benchmark_large_graph_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/large_graph/benchmark_large_graph_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-large-graph-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.35\textwidth]{images/benchmark/large_graph/benchmark_comparison_graph_100_1058}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/large_graph/benchmark_comparison_graph_100_1058}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-100-1058}
 \end{figure}
 
@@ -324,35 +333,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{100 nodes and 970 edges}\label{subsec:result-for-graphs-100-970}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-100-970-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-100-970-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_100_970/benchmark_graph_100_970_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-100-970-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_100_970/benchmark_comparison_graph_100_970}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_100_970/benchmark_comparison_graph_100_970}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-100-970}
 \end{figure}
 
@@ -362,35 +371,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{200 nodes and 3896 edges}\label{subsec:result-for-graphs-200-3896}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3896_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3896_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-200-3896-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3996_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3996_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-200-3896-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3996_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_200_3896/benchmark_graph_200_3996_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-200-3896-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3896/benchmark_comparison_graph_200_3896}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_200_3896/benchmark_comparison_graph_200_3896}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-200-3896}
 \end{figure}
 
@@ -399,35 +408,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{200 nodes and 3880 edges}\label{subsec:result-for-graphs-200-3880}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-200-3880-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-200-3880-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_200_3880/benchmark_graph_200_3880_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-200-3880-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_200_3880/benchmark_comparison_graph_200_3880}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_200_3880/benchmark_comparison_graph_200_3880}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-200-3880}
 \end{figure}
 
@@ -436,35 +445,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{500 nodes - 24876 edges}\label{subsec:result-for-graphs-500-24876}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/too_large_graph/benchmark_too_large_graph_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/too_large_graph/benchmark_too_large_graph_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-500-24876-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/too_large_graph/benchmark_too_large_graph_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/too_large_graph/benchmark_too_large_graph_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-500-24876-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/too_large_graph/benchmark_graph_500_24876_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/too_large_graph/benchmark_graph_500_24876_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-500-24876-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/too_large_graph/benchmark_comparison_graph_500_24876}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/too_large_graph/benchmark_comparison_graph_500_24876}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-500-24876}
 \end{figure}
 
@@ -474,35 +483,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{500 nodes - 24864 edges}\label{subsec:result-for-graphs-500-24864}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_sagemath}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-500-24864-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-500-24864-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_rust}
+    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_500_24864/benchmark_graph_500_24864_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-500-24864-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_500_24864/benchmark_comparison_graph_500_24864}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_500_24864/benchmark_comparison_graph_500_24864}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-500-24864}
 \end{figure}
 
@@ -512,35 +521,35 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{800 nodes - 63378 edges}\label{subsec:result-for-graphs-800-63378}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_sagemath}
+    \includegraphics[width=0.75\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_sagemath}
     \caption{Result benchmark SageMath implementation}
     \label{fig:benchmark-graph-800-63378-sagemath}
 \end{figure}
 
-\subsubsection*{Eleni Pistiloglou's implementation}
+%\subsubsection*{Eleni Pistiloglou's implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.60\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_python}
+    \includegraphics[width=1\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_python}
     \caption{Result benchmark Eleni Pistiloglou's implementation}
     \label{fig:benchmark-graph-800-63378-python}
 \end{figure}
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_rust}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_800_63378/benchmark_graph_800_63378_rust}
     \caption{Result benchmark Rust implementation}
     \label{fig:benchmark-graph-800-63378-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_800_63378/benchmark_comparison_graph_800_63378}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_800_63378/benchmark_comparison_graph_800_63378}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-800-63378}
 \end{figure}
 
@@ -549,7 +558,7 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 
 \subsection{1000 nodes - 100206 edges}\label{subsec:result-for-graphs-1000-100206}
 
-\subsubsection*{SageMath implementation}
+%\subsubsection*{SageMath implementation}
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.80\textwidth]{images/benchmark/graph_1000_100206/benchmark_graph_1000_100206_sagemath}
@@ -558,7 +567,7 @@ Here it's called a small graph because of its size, containing just 11 nodes for
 \end{figure}
 
 
-\subsubsection*{Rust implementation}
+%\subsubsection*{Rust implementation}
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.80\textwidth]{images/benchmark/graph_1000_100206/benchmark_graph_1000_100206_rust}
@@ -566,18 +575,18 @@ Here it's called a small graph because of its size, containing just 11 nodes for
     \label{fig:benchmark-graph-1000-100206-rust}
 \end{figure}
 
-\subsubsection*{Benchmark Comparison}
+%\subsubsection*{Benchmark Comparison}
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.40\textwidth]{images/benchmark/graph_1000_100206/benchmark_comparison_graph_1000_100206}
-    \caption{Result benchmark Rust implementation}
+    \includegraphics[width=0.70\textwidth]{images/benchmark/graph_1000_100206/benchmark_comparison_graph_1000_100206}
+    \caption{Benchmark comparison}
     \label{fig:benchmark-comparison-graph-1000-100206}
 \end{figure}
 
 
 \newpage
 
-\section{Conclusion}\label{sec:conclusion}
+\section{Conclusions}\label{sec:conclusions}
 
 The benchmark results show that implementations of modular decomposition algorithms in SageMath, Eleni Pistiloglou's version in Python and Rust exhibit significant performance differences as a function of graph size and structure.
 
@@ -585,7 +594,7 @@ The benchmark results show that implementations of modular decomposition algorit
     \item Small graphs: For small graphs, all implementations are efficient with minor differences in execution time.
     The Python and SageMath implementations gave comparable results, although SageMath was slightly faster.
     \item Large graphs: As the size of the graph increased, particularly for graphs containing hundreds of nodes and thousands of edges, the performance differences became pronounced.
-    Rust always outperformed Python, thanks to its memory management and concurrency capabilities, but was falling behind SageMath.
+    Rust always outperformed Python, but was falling behind SageMath.
     Python was the slowest performer, particularly when manipulating large graphs with complex structures, while SageMath performed moderately well, but often worse than Rust in some cases.
 \end{itemize}
 
